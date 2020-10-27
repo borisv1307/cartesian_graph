@@ -297,5 +297,44 @@ void main() {
         verifyNever(mockPixelMap.updatePixel(any,any,any));
       });
     });
+
+    group('Precision not exact from bounds and display size',(){
+      MockPixelMap mockPixelMap;
+      setUpAll((){
+        GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-2,3,-2,3),DisplaySize(4,4),1);
+        mockPixelMap = MockPixelMap();
+        graphDisplay.pixelMap = mockPixelMap;
+        graphDisplay.displayAxes(Colors.black);
+      });
+
+      test('should display intersection',(){
+        var center = verify(mockPixelMap.updatePixel(1,1,captureAny));
+        expect(center.captured[0].value,Colors.black.value);
+      });
+
+      test('should display x axis',(){
+        var left = verify(mockPixelMap.updatePixel(0,1,captureAny));
+        var right = verify(mockPixelMap.updatePixel(2,1,captureAny));
+        var farRight = verify(mockPixelMap.updatePixel(3,1,captureAny));
+
+        expect(left.captured[0].value,Colors.black.value);
+        expect(right.captured[0].value,Colors.black.value);
+        expect(farRight.captured[0].value,Colors.black.value);
+      });
+
+      test('should display y axis',(){
+        var lower = verify(mockPixelMap.updatePixel(1,0,captureAny));
+        var upper = verify(mockPixelMap.updatePixel(1,2,captureAny));
+        var topUpper = verify(mockPixelMap.updatePixel(1,3,captureAny));
+
+        expect(lower.captured[0].value,Colors.black.value);
+        expect(upper.captured[0].value,Colors.black.value);
+        expect(topUpper.captured[0].value,Colors.black.value);
+      });
+
+      test('should not display other points',(){
+        verifyNever(mockPixelMap.updatePixel(any,any,any));
+      });
+    });
   });
 }
