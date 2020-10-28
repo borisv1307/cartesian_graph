@@ -1,0 +1,2 @@
+class InvalidGraphException implements Exception {
+}
