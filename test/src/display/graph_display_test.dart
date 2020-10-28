@@ -364,7 +364,7 @@ void main() {
 
   test('Segments are entirely out of bounds are not displayed',(){
     MockPixelMap mockPixelMap = MockPixelMap();
-    GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(1,3,1,3),DisplaySize(3,3),1);;
+    GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(1,3,1,3),DisplaySize(3,3),1);
     graphDisplay.pixelMap = mockPixelMap;
 
     graphDisplay.plotSegment(Coordinates(5,5), Coordinates(6,7), Colors.black);
