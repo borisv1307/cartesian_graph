@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
-import 'package:cartesian_graph/src/display/invalid_graph_exception.dart';
+import 'file:///C:/Users/Greg/IdeaProjects/se-calc/cartesian_graph/lib/src/display/translator/invalid_graph_exception.dart';
 import 'package:cartesian_graph/src/display/pixel_location.dart';
 
 class CoordinatePixelTranslator{
