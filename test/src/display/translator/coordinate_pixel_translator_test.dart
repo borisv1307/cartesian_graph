@@ -4,7 +4,6 @@ import 'file:///C:/Users/Greg/IdeaProjects/se-calc/cartesian_graph/lib/src/displ
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'file:///C:/Users/Greg/IdeaProjects/se-calc/cartesian_graph/lib/src/display/translator/invalid_graph_exception.dart';
 import 'package:cartesian_graph/src/display/pixel_point.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -12,24 +11,6 @@ void main() {
     test('creates a translator',(){
       CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(-1,1,-1,1),DisplaySize(3,3),1);
       expect(translator, isInstanceOf<CoordinatePixelTranslator>());
-    });
-
-    test('inputs bounds',(){
-      Bounds bounds = Bounds(-1,1,-1,1);
-      CoordinatePixelTranslator translator = CoordinatePixelTranslator(bounds,DisplaySize(3,3),1);
-      expect(translator.bounds, bounds);
-    });
-
-    test('inputs display size',(){
-      DisplaySize displaySize = DisplaySize(3,3);
-      CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(-1,1,-1,1),displaySize,1);
-      expect(translator.displaySize, displaySize);
-    });
-
-    test('inputs density',(){
-      int density = 1;
-      CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(-1,1,-1,1),DisplaySize(3,3),density);
-      expect(translator.lineWeight, 1);
     });
   });
 
@@ -127,53 +108,47 @@ void main() {
   });
 
   group('X values identified for display',(){
-    List<double> xCoordinates;
-
-    void coordinateBuilder(List<double> xCoords){
-      xCoordinates = xCoords;
-    }
-
     group('graph with precision of 1',(){
       test('line weight of  1',(){
-        CoordinatePixelTranslator(Bounds(-1,1,-1,1),DisplaySize(3,3),1, builder:coordinateBuilder);
-        expect(xCoordinates,[-1,0,1]);
+        CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(-1,1,-1,1),DisplaySize(3,3),1);
+        expect(translator.xCoordinates,[-1,0,1]);
       });
 
       test('line weight of greater than 1',(){
-        CoordinatePixelTranslator(Bounds(-1,1,-1,1),DisplaySize(6,6),2, builder:coordinateBuilder);
-        expect(xCoordinates,[-1,0,1]);
+        CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(-1,1,-1,1),DisplaySize(6,6),2);
+        expect(translator.xCoordinates,[-1,0,1]);
       });
     });
 
     test('graph with fractional precision',(){
-      CoordinatePixelTranslator(Bounds(-1,1,-1,1),DisplaySize(5,5),1, builder:coordinateBuilder);
-      expect(xCoordinates,[-1,-0.5,0,0.5,1]);
+      CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(-1,1,-1,1),DisplaySize(5,5),1);
+      expect(translator.xCoordinates,[-1,-0.5,0,0.5,1]);
     });
 
     test('off center graph',(){
-      CoordinatePixelTranslator(Bounds(0,2,0,2),DisplaySize(3,3),1, builder: coordinateBuilder);
-      expect(xCoordinates,[0,1,2]);
+      CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(0,2,0,2),DisplaySize(3,3),1);
+      expect(translator.xCoordinates,[0,1,2]);
     });
 
     test('graph with precision greater than 1',(){
-      CoordinatePixelTranslator(Bounds(-2,2,-2,2),DisplaySize(3,3),1, builder:coordinateBuilder);
-      expect(xCoordinates,[-2,0,2]);
+      CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(-2,2,-2,2),DisplaySize(3,3),1);
+      expect(translator.xCoordinates,[-2,0,2]);
     });
 
     test('graph with bounds resulting in axis not visible',(){
-      CoordinatePixelTranslator(Bounds(1,3,1,3),DisplaySize(3,3),1, builder:coordinateBuilder);
-      expect(xCoordinates,[1,2,3]);
+      CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(1,3,1,3),DisplaySize(3,3),1);
+      expect(translator.xCoordinates,[1,2,3]);
     });
 
     group('display must display beyond bounds to ensure precision consistency',(){
       test('scale left of y axis utilized', (){
-        CoordinatePixelTranslator(Bounds(-2,3,-2,3),DisplaySize(4,4),1, builder:coordinateBuilder);
-        expect(xCoordinates,[-2,0,2,4]);
+        CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(-2,3,-2,3),DisplaySize(4,4),1);
+        expect(translator.xCoordinates,[-2,0,2,4]);
       });
 
       test('scale right of y axis utilized', (){
-        CoordinatePixelTranslator(Bounds(-3,2,-3,2),DisplaySize(4,4),1, builder:coordinateBuilder);
-        expect(xCoordinates,[-4,-2,0,2]);
+        CoordinatePixelTranslator translator = CoordinatePixelTranslator(Bounds(-3,2,-3,2),DisplaySize(4,4),1);
+        expect(translator.xCoordinates,[-4,-2,0,2]);
       });
     });
   });

@@ -68,7 +68,7 @@ void main() {
 
   group('Inputs are validated',(){
     test('both coordinates and coordinates builder cannot be provided together',(){
-      expect(() => CartesianGraph(Bounds(-1,1,-1,1), coordinates: [],coordinatesBuilder: (x,y){return [];}), throwsAssertionError);
+      expect(() => CartesianGraph(Bounds(-1,1,-1,1), coordinates: [],coordinatesBuilder: (x){return [];}), throwsAssertionError);
     });
   });
 
@@ -121,7 +121,7 @@ void main() {
 
     group('from coordinates builder',(){
 
-      List<Coordinates> testBuilder(double xPrecision, double yPrecision){
+      List<Coordinates> testBuilder(List<double> xCoordinates){
         return [Coordinates(0,0), Coordinates(1,1)];
       }
 

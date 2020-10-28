@@ -26,7 +26,7 @@ void main(){
     expect(locationMap[coordinates], location);
   });
 
-  group('Retrieves closest match', (){
+  group('Retrieves closest pixel location match', (){
 
     test('with closest x',(){
       CoordinatePixelPointLocationMap locationMap = CoordinatePixelPointLocationMap();

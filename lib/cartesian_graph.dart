@@ -19,7 +19,7 @@ class CartesianGraph extends StatelessWidget{
   final Color legendColor;
   final Color lineColor;
   final Bounds bounds;
-  final List<Coordinates> Function(double xPrecision,double yPrecision) coordinatesBuilder;
+  final List<Coordinates> Function(List<double>) coordinatesBuilder;
 
   CartesianGraph(this.bounds, {this.coordinates, this.cursorLocation, this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder}):
       assert(!(coordinates != null && coordinatesBuilder != null));
@@ -34,7 +34,7 @@ class CartesianGraph extends StatelessWidget{
 
     List<Coordinates> coordinates = this.coordinates;
     if(coordinatesBuilder != null){
-      coordinates = coordinatesBuilder(display.xPrecision,display.yPrecision);
+      coordinates = coordinatesBuilder(display.xCoordinates);
     }
     coordinates ??= [];
 
