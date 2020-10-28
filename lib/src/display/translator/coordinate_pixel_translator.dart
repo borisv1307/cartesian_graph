@@ -4,13 +4,14 @@ import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'file:///C:/Users/Greg/IdeaProjects/se-calc/cartesian_graph/lib/src/display/translator/invalid_graph_exception.dart';
-import 'package:cartesian_graph/src/display/pixel_location.dart';
+import 'package:cartesian_graph/src/display/pixel_point.dart';
+import 'package:cartesian_graph/src/display/translator/coordinate_pixel_location_map.dart';
 
 class CoordinatePixelTranslator{
   final Bounds bounds;
   final DisplaySize displaySize;
   final int lineWeight;
-  final Map<Coordinates,PixelLocation> pixelLocations = Map();
+  final CoordinatePixelPointLocationMap pixelLocations = CoordinatePixelPointLocationMap();
 
   CoordinatePixelTranslator(this.bounds,this.displaySize, this.lineWeight, {void Function(List<double> xCoords) builder}){
     if(displaySize.width == 0 || displaySize.height == 0 || this.lineWeight < 1){
@@ -25,7 +26,7 @@ class CoordinatePixelTranslator{
 
     for(int i=0;i<xCoordinates.length;i++){
       for(int j=0;j<yCoordinates.length;j++){
-        pixelLocations[Coordinates(xCoordinates[i],yCoordinates[j])] = PixelLocation(i, j);
+        pixelLocations[Coordinates(xCoordinates[i],yCoordinates[j])] = PixelPoint(i, j);
       }
     }
   }
@@ -74,7 +75,7 @@ class CoordinatePixelTranslator{
     return xPrecision;
   }
 
-  PixelLocation calculatePixelLocation(Coordinates coordinates) {
+  PixelPoint calculatePixelPoint(Coordinates coordinates) {
     return this.pixelLocations[coordinates];
   }
 

@@ -3,7 +3,7 @@ import 'package:cartesian_graph/coordinates.dart';
 import 'file:///C:/Users/Greg/IdeaProjects/se-calc/cartesian_graph/lib/src/display/translator/coordinate_pixel_translator.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'file:///C:/Users/Greg/IdeaProjects/se-calc/cartesian_graph/lib/src/display/translator/invalid_graph_exception.dart';
-import 'package:cartesian_graph/src/display/pixel_location.dart';
+import 'package:cartesian_graph/src/display/pixel_point.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -56,28 +56,28 @@ void main() {
       });
 
       test('center is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(0,0));
-        expect(pixel, PixelLocation(1, 1));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,0));
+        expect(pixel, PixelPoint(1, 1));
       });
 
       test('left of y axis is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(-1,0));
-        expect(pixel, PixelLocation(0, 1));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(-1,0));
+        expect(pixel, PixelPoint(0, 1));
       });
 
       test('right of y axis is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(1,0));
-        expect(pixel, PixelLocation(2, 1));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(1,0));
+        expect(pixel, PixelPoint(2, 1));
       });
 
       test('above x axis is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(0,1));
-        expect(pixel, PixelLocation(1, 2));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,1));
+        expect(pixel, PixelPoint(1, 2));
       });
 
       test('below x axis is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(0,-1));
-        expect(pixel, PixelLocation(1, 0));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,-1));
+        expect(pixel, PixelPoint(1, 0));
       });
     });
 
@@ -88,28 +88,28 @@ void main() {
       });
 
       test('center is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(0,0));
-        expect(pixel, PixelLocation(0, 0));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,0));
+        expect(pixel, PixelPoint(0, 0));
       });
 
       test('above x axis is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(0,1));
-        expect(pixel, PixelLocation(0, 1));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,1));
+        expect(pixel, PixelPoint(0, 1));
       });
 
       test('far above x axis is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(0,2));
-        expect(pixel, PixelLocation(0, 2));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,2));
+        expect(pixel, PixelPoint(0, 2));
       });
 
       test('right of y axis is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(1,0));
-        expect(pixel, PixelLocation(1, 0));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(1,0));
+        expect(pixel, PixelPoint(1, 0));
       });
 
       test('far right of y axis is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(2,0));
-        expect(pixel, PixelLocation(2,0));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(2,0));
+        expect(pixel, PixelPoint(2,0));
       });
     });
 
@@ -120,8 +120,8 @@ void main() {
       });
 
       test('center is correct',(){
-        PixelLocation pixel = translator.calculatePixelLocation(Coordinates(0,0));
-        expect(pixel, PixelLocation(1, 1));
+        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,0));
+        expect(pixel, PixelPoint(1, 1));
       });
     });
   });

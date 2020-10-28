@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import 'package:cartesian_graph/coordinates.dart';
-import 'package:cartesian_graph/src/display/pixel_location.dart';
+import 'package:cartesian_graph/src/display/pixel_point.dart';
 
-class CoordinatePixelLocationMap{
-  Map<Coordinates, PixelLocation> locationMap = Map();
+class CoordinatePixelPointLocationMap{
+  Map<Coordinates, PixelPoint> locationMap = Map();
 
   operator [](Coordinates coordinates) {
-    PixelLocation location = locationMap[coordinates];
+    PixelPoint location = locationMap[coordinates];
     if(location == null){
       Coordinates closest = _getClosestValue(coordinates);
       location = locationMap[closest];
@@ -16,7 +16,7 @@ class CoordinatePixelLocationMap{
     return location;
   }
 
-  operator []=(Coordinates coordinates, PixelLocation location) {
+  operator []=(Coordinates coordinates, PixelPoint location) {
     this.locationMap[coordinates] = location;
   }
 

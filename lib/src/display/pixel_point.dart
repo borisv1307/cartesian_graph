@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 
-class PixelLocation extends Equatable{
+class PixelPoint extends Equatable{
   final int x;
   final int y;
 
-  PixelLocation(this.x, this.y);
+  PixelPoint(this.x, this.y);
 
   @override
   String toString(){
