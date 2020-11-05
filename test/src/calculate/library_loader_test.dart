@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cartesian_graph/src/calculate/library_loader.dart';
 import 'package:flutter_test/flutter_test.dart';
 
