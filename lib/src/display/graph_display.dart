@@ -2,8 +2,8 @@ import 'dart:ui';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
+import 'package:cartesian_graph/src/display/pixel_cluster.dart';
 import 'package:cartesian_graph/src/display/pixel_map.dart';
-import 'package:cartesian_graph/src/display/pixel_point.dart';
 import 'package:cartesian_graph/src/display/translator/coordinate_pixel_translator.dart';
 import 'package:flutter/material.dart';
 import 'package:fraction/fraction.dart';
@@ -29,29 +29,29 @@ class GraphDisplay{
     return graphDisplay;
   }
 
-  void _updatePixelPoint(PixelPoint point, Color color){
-    for(int i = point.x*lineWeight;i<((point.x+1)*lineWeight);i++){
-      for(int j = point.y*lineWeight;j<((point.y+1)*lineWeight);j++){
+  void _updatePixelCluster(PixelCluster cluster, Color color){
+    for(int i = cluster.x*lineWeight;i<((cluster.x+1)*lineWeight);i++){
+      for(int j = cluster.y*lineWeight;j<((cluster.y+1)*lineWeight);j++){
         pixelMap.updatePixel(i, j, color);
       }
     }
   }
 
-  PixelPoint _calculatePixelPoint(Coordinates coordinates){
-    return translator.calculatePixelPoint(coordinates);
+  PixelCluster _calculatePixelCluster(Coordinates coordinates){
+    return translator.calculatePixelCluster(coordinates);
   }
 
   void plotSegment(Coordinates firstCoordinates, Coordinates secondCoordinates, Color color){
     if(this.bounds.isWithin(firstCoordinates) || this.bounds.isWithin(secondCoordinates)){
-      PixelPoint first = _calculatePixelPoint(firstCoordinates);
-      PixelPoint second = _calculatePixelPoint(secondCoordinates);
+      PixelCluster first = _calculatePixelCluster(firstCoordinates);
+      PixelCluster second = _calculatePixelCluster(secondCoordinates);
 
       int startX = firstCoordinates.x.abs() > secondCoordinates.x.abs() ? second.x : first.x;
       int endX = firstCoordinates.x.abs() > secondCoordinates.x.abs() ? first.x : second.x;
       int startY = firstCoordinates.y.abs() > secondCoordinates.y.abs() ? second.y : first.y;
       int endY = firstCoordinates.y.abs() > secondCoordinates.y.abs() ? first.y : second.y;
 
-      _updatePixelPoint(PixelPoint(startX, startY), Colors.black);
+      _updatePixelCluster(PixelCluster(startX, startY), Colors.black);
 
       int ySpan = endY - startY;
       int xSpan = endX - startX;
@@ -72,7 +72,7 @@ class GraphDisplay{
       int x = startX + xDirection;
       for(int i = 0; i < xSlope; i++){
         for(int j = 0; j < ySlope; j++){
-          _updatePixelPoint(PixelPoint(x, y), color);
+          _updatePixelCluster(PixelCluster(x, y), color);
           y+= yDirection;
         }
         x+= xDirection;
@@ -81,16 +81,16 @@ class GraphDisplay{
   }
 
   void displayAxes(Color color){
-    PixelPoint center = this.translator.calculatePixelPoint(Coordinates(0, 0));
+    PixelCluster center = this.translator.calculatePixelCluster(Coordinates(0, 0));
 
     if(bounds.isYWithin(0)) {
       for (int i = 0; i < _numXPixelPoints; i++) {
-        _updatePixelPoint(PixelPoint(i, center.y), color);
+        _updatePixelCluster(PixelCluster(i, center.y), color);
       }
     }
     if(bounds.isXWithin(0)) {
       for (int i = 0; i < _numYPixelPoints; i++) {
-        _updatePixelPoint(PixelPoint(center.x, i), color);
+        _updatePixelCluster(PixelCluster(center.x, i), color);
       }
     }
   }
@@ -98,11 +98,11 @@ class GraphDisplay{
   void displayCursor(Coordinates cursorLocation){
     int width = (24/lineWeight).round();
     for(int i = (cursorLocation.x-width).toInt(); i<(cursorLocation.x+width).toInt(); i++){
-        _updatePixelPoint(PixelPoint(i, cursorLocation.y.toInt()), Colors.blue);
+        _updatePixelCluster(PixelCluster(i, cursorLocation.y.toInt()), Colors.blue);
     }
 
     for(int i = (cursorLocation.y-width).toInt(); i<(cursorLocation.y+width).toInt(); i++){
-      _updatePixelPoint(PixelPoint(cursorLocation.x.toInt(), i), Colors.blue);
+      _updatePixelCluster(PixelCluster(cursorLocation.x.toInt(), i), Colors.blue);
     }
   }
 

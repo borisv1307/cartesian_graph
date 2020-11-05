@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/cartesian_graph.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/src/calculate/coordinate_calculator.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +16,7 @@ import 'dart:ui' as ui;
 
 class MockGraphDisplay extends Mock implements GraphDisplay {
   ui.Image _image;
+  List<double> xCoordinates = [0,1];
 
   MockGraphDisplay(this._image);
 
@@ -26,15 +28,21 @@ class MockGraphDisplay extends Mock implements GraphDisplay {
 }
 
 class MockImage extends Mock implements ui.Image{}
+class MockCalculator extends Mock implements CoordinateCalculator{}
 
 class TestableCartesianGraph extends CartesianGraph{
   final GraphDisplay _graphDisplay;
-
-  TestableCartesianGraph(Bounds bounds, this._graphDisplay, {List<Coordinates> coordinates, coordinatesBuilder}): super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder);
+  final CoordinateCalculator coordinateCalculator;
+  TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation}): super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equation:equation);
 
   @override
   GraphDisplay createGraphDisplay(Bounds bounds, DisplaySize displaySize, int density){
     return _graphDisplay;
+  }
+
+  @override
+  CoordinateCalculator createCoordinateCalculator(){
+    return coordinateCalculator;
   }
 }
 void main() {
@@ -58,7 +66,7 @@ void main() {
 
     testWidgets(('is present'), (WidgetTester tester) async{
       Bounds expectedBounds = Bounds(-1,1,-1,1);
-      await tester.pumpWidget(_makeTestable(TestableCartesianGraph(expectedBounds,MockGraphDisplay(await _createMockImage()))));
+      await tester.pumpWidget(_makeTestable(TestableCartesianGraph(expectedBounds,MockGraphDisplay(await _createMockImage()),MockCalculator())));
       await tester.pumpAndSettle();
 
       expect(find.byType(TestableCartesianGraph), findsNWidgets(1));
@@ -66,22 +74,17 @@ void main() {
 
   });
 
-  group('Inputs are validated',(){
-    test('both coordinates and coordinates builder cannot be provided together',(){
-      expect(() => CartesianGraph(Bounds(-1,1,-1,1), coordinates: [],coordinatesBuilder: (x){return [];}), throwsAssertionError);
-    });
-  });
 
   testWidgets(('Cartesian Graph initially shows progress indicator'), (WidgetTester tester) async{
     MockGraphDisplay mockGraphDisplay = MockGraphDisplay(await _createMockImage());
-    await tester.pumpWidget(_makeTestable(TestableCartesianGraph(Bounds(-1,1,-1,1), mockGraphDisplay)));
+    await tester.pumpWidget(_makeTestable(TestableCartesianGraph(Bounds(-1,1,-1,1), mockGraphDisplay,MockCalculator())));
     expect(find.byType(CircularProgressIndicator),findsOneWidget);
   });
 
   testWidgets(('Cartesian Graph displays image'), (WidgetTester tester) async{
     var mockImage = await _createMockImage();
     MockGraphDisplay mockGraphDisplay = MockGraphDisplay(mockImage);
-    await tester.pumpWidget(_makeTestable(TestableCartesianGraph(Bounds(-1,1,-1,1),mockGraphDisplay)));
+    await tester.pumpWidget(_makeTestable(TestableCartesianGraph(Bounds(-1,1,-1,1),mockGraphDisplay,MockCalculator())));
     await tester.pumpAndSettle();
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(find.byType(RawImage), findsNWidgets(1));
@@ -92,42 +95,61 @@ void main() {
 
   group('Segment plotting',(){
     GraphDisplay graphDisplay;
+    MockCalculator mockCalculator;
 
-    Future _createWidget(WidgetTester tester,{List<Coordinates> coordinates, coordinatesBuilder}) async{
-      graphDisplay = MockGraphDisplay(await _createMockImage());
-      TestableCartesianGraph graph = TestableCartesianGraph(Bounds(-1,1,-1,1),graphDisplay,coordinates: coordinates, coordinatesBuilder:coordinatesBuilder);
-      await tester.pumpWidget(_makeTestable(graph));
-      await tester.pumpAndSettle();
+    List<Coordinates> coordinates = [Coordinates(-1,-1),Coordinates(0,0),Coordinates(1,1)];
+    List<double> actualBuilderCoordinates;
+    List<Coordinates> testBuilder(List<double> xCoordinates){
+      actualBuilderCoordinates = xCoordinates;
+      return [Coordinates(-1,1), Coordinates(0,1)];
     }
 
-    group('from provided coordinates',(){
-      List<Coordinates> coordinates = [Coordinates(-1,-1),Coordinates(0,0),Coordinates(1,1)];
+    Future setup(WidgetTester tester) async{
+      graphDisplay = MockGraphDisplay(await _createMockImage());
+      mockCalculator = MockCalculator();
+      when(mockCalculator.calculate('2x', any)).thenReturn(-1);
 
-      testWidgets(('plots provided coordinates as segments'), (WidgetTester tester) async{
-        await _createWidget(tester, coordinates: coordinates);
-        verify(graphDisplay.plotSegment(any, any, any)).called(2);
+      TestableCartesianGraph graph = TestableCartesianGraph(Bounds(-1,1,-1,1),graphDisplay,mockCalculator,coordinates: coordinates, coordinatesBuilder:testBuilder, equation: '2x',);
+      await tester.pumpWidget(_makeTestable(graph));
+      await tester.pumpAndSettle();    }
+
+    testWidgets(('plots provided coordinates as segments'), (WidgetTester tester) async{
+      await setup(tester);
+      verify(graphDisplay.plotSegment(any, any, any)).called(4);
+    });
+
+    testWidgets(('plots first segment of coordinates'), (WidgetTester tester) async{
+      await setup(tester);
+      verify(graphDisplay.plotSegment(Coordinates(-1,-1), Coordinates(0,0), Colors.black)).called(1);
+    });
+
+    testWidgets(('plots second segment of coordinates'), (WidgetTester tester) async{
+      await setup(tester);
+      verify(graphDisplay.plotSegment(Coordinates(0,0), Coordinates(1,1), Colors.black)).called(1);
+    });
+
+    group('plots builder',(){
+      testWidgets(('provides correct x coordinates to builder'), (WidgetTester tester) async{
+        await setup(tester);
+        expect(actualBuilderCoordinates,[0,1]);
       });
 
-      testWidgets(('plots first segment'), (WidgetTester tester) async{
-        await _createWidget(tester, coordinates: coordinates);
-        verify(graphDisplay.plotSegment(Coordinates(-1,-1), Coordinates(0,0), Colors.black)).called(1);
-      });
-
-      testWidgets(('plots second segment'), (WidgetTester tester) async{
-        await _createWidget(tester, coordinates: coordinates);
-        verify(graphDisplay.plotSegment(Coordinates(0,0), Coordinates(1,1), Colors.black)).called(1);
+      testWidgets(('plots provided coordinates builder coordinates as segment'), (WidgetTester tester) async{
+        await setup(tester);
+        verify(graphDisplay.plotSegment(Coordinates(-1,1), Coordinates(0,1), Colors.black)).called(1);
       });
     });
 
-    group('from coordinates builder',(){
+    group('plots equation',(){
+      testWidgets('calculates y value with equation',(WidgetTester tester) async{
+        await setup(tester);
+        verify(mockCalculator.calculate('2x', 0)).called(1);
+        verify(mockCalculator.calculate('2x', 1)).called(1);
+      });
 
-      List<Coordinates> testBuilder(List<double> xCoordinates){
-        return [Coordinates(0,0), Coordinates(1,1)];
-      }
-
-      testWidgets(('plots provided coordinates as segment'), (WidgetTester tester) async{
-        await _createWidget(tester, coordinatesBuilder: testBuilder);
-        verify(graphDisplay.plotSegment(Coordinates(0,0), Coordinates(1,1), Colors.black)).called(1);
+      testWidgets('display coordinates with equation',(WidgetTester tester) async{
+        await setup(tester);
+        verify(graphDisplay.plotSegment(Coordinates(0,-1), Coordinates(1,-1), Colors.black)).called(1);
       });
     });
   });

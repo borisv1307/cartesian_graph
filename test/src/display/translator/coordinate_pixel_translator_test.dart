@@ -1,7 +1,7 @@
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
-import 'package:cartesian_graph/src/display/pixel_point.dart';
+import 'package:cartesian_graph/src/display/pixel_cluster.dart';
 import 'package:cartesian_graph/src/display/translator/coordinate_pixel_translator.dart';
 import 'package:cartesian_graph/src/display/translator/invalid_graph_exception.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,28 +37,28 @@ void main() {
       });
 
       test('center is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,0));
-        expect(pixel, PixelPoint(1, 1));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(0,0));
+        expect(pixel, PixelCluster(1, 1));
       });
 
       test('left of y axis is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(-1,0));
-        expect(pixel, PixelPoint(0, 1));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(-1,0));
+        expect(pixel, PixelCluster(0, 1));
       });
 
       test('right of y axis is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(1,0));
-        expect(pixel, PixelPoint(2, 1));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(1,0));
+        expect(pixel, PixelCluster(2, 1));
       });
 
       test('above x axis is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,1));
-        expect(pixel, PixelPoint(1, 2));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(0,1));
+        expect(pixel, PixelCluster(1, 2));
       });
 
       test('below x axis is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,-1));
-        expect(pixel, PixelPoint(1, 0));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(0,-1));
+        expect(pixel, PixelCluster(1, 0));
       });
     });
 
@@ -69,28 +69,28 @@ void main() {
       });
 
       test('center is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,0));
-        expect(pixel, PixelPoint(0, 0));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(0,0));
+        expect(pixel, PixelCluster(0, 0));
       });
 
       test('above x axis is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,1));
-        expect(pixel, PixelPoint(0, 1));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(0,1));
+        expect(pixel, PixelCluster(0, 1));
       });
 
       test('far above x axis is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,2));
-        expect(pixel, PixelPoint(0, 2));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(0,2));
+        expect(pixel, PixelCluster(0, 2));
       });
 
       test('right of y axis is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(1,0));
-        expect(pixel, PixelPoint(1, 0));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(1,0));
+        expect(pixel, PixelCluster(1, 0));
       });
 
       test('far right of y axis is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(2,0));
-        expect(pixel, PixelPoint(2,0));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(2,0));
+        expect(pixel, PixelCluster(2,0));
       });
     });
 
@@ -101,8 +101,8 @@ void main() {
       });
 
       test('center is correct',(){
-        PixelPoint pixel = translator.calculatePixelPoint(Coordinates(0,0));
-        expect(pixel, PixelPoint(1, 1));
+        PixelCluster pixel = translator.calculatePixelCluster(Coordinates(0,0));
+        expect(pixel, PixelCluster(1, 1));
       });
     });
   });
