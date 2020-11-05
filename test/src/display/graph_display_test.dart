@@ -233,6 +233,28 @@ void main() {
         });
 
       });
+
+      group('fourth quadrant',(){
+        MockPixelMap mockPixelMap;
+        MockCoordinatePixelTranslator mockTranslator;
+        setUp(() {
+          mockTranslator = MockCoordinatePixelTranslator();
+          when(mockTranslator.calculatePixelCluster(Coordinates(1,-2))).thenReturn(PixelCluster(3,0));
+          when(mockTranslator.calculatePixelCluster(Coordinates(2,-1))).thenReturn(PixelCluster(4, 1));
+
+          mockPixelMap = plotSegment(Coordinates(1, -2), Coordinates(2, -1),mockTranslator);
+        });
+
+        test('should calculate 2 pixels',(){
+          verify(mockTranslator.calculatePixelCluster(any)).called(2);
+        });
+
+        test('should update endpoints', () {
+          verify(mockPixelMap.updatePixel(3, 0, any)).called(1);
+          verify(mockPixelMap.updatePixel(4, 1, any)).called(1);
+          verifyNever(mockPixelMap.updatePixel(any, any, any));
+        });
+      });
     });
     group('non-sequential x values',(){
       group('perfect diagonal gap of 1',() {

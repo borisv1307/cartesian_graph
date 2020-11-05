@@ -46,12 +46,19 @@ class GraphDisplay{
       PixelCluster first = _calculatePixelCluster(firstCoordinates);
       PixelCluster second = _calculatePixelCluster(secondCoordinates);
 
-      int startX = firstCoordinates.x.abs() > secondCoordinates.x.abs() ? second.x : first.x;
-      int endX = firstCoordinates.x.abs() > secondCoordinates.x.abs() ? first.x : second.x;
-      int startY = firstCoordinates.y.abs() > secondCoordinates.y.abs() ? second.y : first.y;
-      int endY = firstCoordinates.y.abs() > secondCoordinates.y.abs() ? first.y : second.y;
+      int startX = first.x;
+      int endX = second.x;
+      int startY = first.y;
+      int endY = second.y;
 
-      _updatePixelCluster(PixelCluster(startX, startY), Colors.black);
+      if(firstCoordinates.x.abs() > secondCoordinates.x.abs()){
+        startX = second.x;
+        endX = first.x;
+        startY = second.y;
+        endY = first.y;
+      }
+
+      _updatePixelCluster(PixelCluster(startX, startY), color);
 
       int ySpan = endY - startY;
       int xSpan = endX - startX;
