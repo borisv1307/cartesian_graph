@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
-import 'package:cartesian_graph/src/display/pixel_point.dart';
+import 'package:cartesian_graph/src/display/pixel_cluster.dart';
 import 'package:cartesian_graph/src/display/translator/coordinate_pixel_location_map.dart';
 import 'package:cartesian_graph/src/display/translator/invalid_graph_exception.dart';
 
@@ -24,7 +24,7 @@ class CoordinatePixelTranslator{
     final CoordinatePixelPointLocationMap pixelLocations = CoordinatePixelPointLocationMap();
     for(int i=0;i<xCoordinates.length;i++){
       for(int j=0;j<yCoordinates.length;j++){
-        pixelLocations[Coordinates(xCoordinates[i],yCoordinates[j])] = PixelPoint(i, j);
+        pixelLocations[Coordinates(xCoordinates[i],yCoordinates[j])] = PixelCluster(i, j);
       }
     }
     return CoordinatePixelTranslator._internal(pixelLocations, xCoordinates);
@@ -73,7 +73,7 @@ class CoordinatePixelTranslator{
     return xPrecision;
   }
 
-  PixelPoint calculatePixelPoint(Coordinates coordinates) {
+  PixelCluster calculatePixelCluster(Coordinates coordinates) {
     return this.pixelLocations[coordinates];
   }
 

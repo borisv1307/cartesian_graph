@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import 'package:cartesian_graph/coordinates.dart';
-import 'package:cartesian_graph/src/display/pixel_point.dart';
+import 'package:cartesian_graph/src/display/pixel_cluster.dart';
 
 class CoordinatePixelPointLocationMap{
-  Map<Coordinates, PixelPoint> locationMap = Map();
+  Map<Coordinates, PixelCluster> locationMap = Map();
 
   operator [](Coordinates coordinates) {
-    PixelPoint location = locationMap[coordinates];
+    PixelCluster location = locationMap[coordinates];
     if(location == null){
       Coordinates closest = _getClosestValue(coordinates);
       location = locationMap[closest];
@@ -16,7 +16,7 @@ class CoordinatePixelPointLocationMap{
     return location;
   }
 
-  operator []=(Coordinates coordinates, PixelPoint location) {
+  operator []=(Coordinates coordinates, PixelCluster location) {
     this.locationMap[coordinates] = location;
   }
 

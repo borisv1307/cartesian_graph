@@ -2,6 +2,7 @@ library cartesian_graph;
 
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/src/calculate/coordinate_calculator.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,9 +21,9 @@ class CartesianGraph extends StatelessWidget{
   final Color lineColor;
   final Bounds bounds;
   final List<Coordinates> Function(List<double>) coordinatesBuilder;
+  final String equation;
 
-  CartesianGraph(this.bounds, {this.coordinates, this.cursorLocation, this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder}):
-      assert(!(coordinates != null && coordinatesBuilder != null));
+  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder, this.equation});
 
   Future<ui.Image> _makeImage(double containerWidth, double containerHeight){
     final c = Completer<ui.Image>();
@@ -32,25 +33,41 @@ class CartesianGraph extends StatelessWidget{
       display.displayCursor(cursorLocation);
     }
 
-    List<Coordinates> coordinates = this.coordinates;
     if(coordinatesBuilder != null){
-      coordinates = coordinatesBuilder(display.xCoordinates);
+      List<Coordinates> builderCoordinates = coordinatesBuilder(display.xCoordinates);
+      _plotCoordinates(display, builderCoordinates);
     }
-    coordinates ??= [];
 
-    for(int i = 0; i< coordinates.length-1;i++){
-      display.plotSegment(coordinates[i],coordinates[i+1], lineColor);
+    if(equation != null){
+      CoordinateCalculator calculator = createCoordinateCalculator();
+      List<Coordinates> calculatedCoordinates = [];
+      for(double xCoordinate in display.xCoordinates){
+        double yCoordinate = calculator.calculate(equation, xCoordinate);
+        calculatedCoordinates.add(Coordinates(xCoordinate, yCoordinate));
+      }
+      _plotCoordinates(display, calculatedCoordinates);
     }
+
+    _plotCoordinates(display, coordinates);
 
     display.render(c.complete);
 
     return c.future;
   }
 
+  void _plotCoordinates(GraphDisplay display, List<Coordinates> coordinates){
+    for(int i = 0; i< coordinates.length-1;i++){
+      display.plotSegment(coordinates[i],coordinates[i+1], lineColor);
+    }
+  }
+
   GraphDisplay createGraphDisplay(Bounds bounds, DisplaySize displaySize, int density){
     return GraphDisplay.bounds(bounds,displaySize,density);
   }
 
+  CoordinateCalculator createCoordinateCalculator(){
+    return CoordinateCalculator();
+  }
 
   @override
   Widget build(BuildContext context) {

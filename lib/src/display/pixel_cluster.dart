@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 
-class PixelPoint extends Equatable{
+class PixelCluster extends Equatable{
   final int x;
   final int y;
 
-  PixelPoint(this.x, this.y);
+  PixelCluster(this.x, this.y);
 
   @override
   String toString(){
