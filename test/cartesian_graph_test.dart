@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:advanced_calculation/advanced_calculation.dart';
+import 'package:advanced_calculation/advanced_calculator.dart';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/cartesian_graph.dart';
 import 'package:cartesian_graph/coordinates.dart';
-import 'package:cartesian_graph/src/calculate/coordinate_calculator.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,11 +29,11 @@ class MockGraphDisplay extends Mock implements GraphDisplay {
 }
 
 class MockImage extends Mock implements ui.Image{}
-class MockCalculator extends Mock implements CoordinateCalculator{}
+class MockCalculator extends Mock implements AdvancedCalculator{}
 
 class TestableCartesianGraph extends CartesianGraph{
   final GraphDisplay _graphDisplay;
-  final CoordinateCalculator coordinateCalculator;
+  final AdvancedCalculator coordinateCalculator;
   TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation}): super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equation:equation);
 
   @override
@@ -41,7 +42,7 @@ class TestableCartesianGraph extends CartesianGraph{
   }
 
   @override
-  CoordinateCalculator createCoordinateCalculator(){
+  AdvancedCalculator createCoordinateCalculator(){
     return coordinateCalculator;
   }
 }
@@ -107,7 +108,7 @@ void main() {
     Future setup(WidgetTester tester) async{
       graphDisplay = MockGraphDisplay(await _createMockImage());
       mockCalculator = MockCalculator();
-      when(mockCalculator.calculate('2x', any)).thenReturn(-1);
+      when(mockCalculator.calculateEquation('2x', any)).thenReturn(-1);
 
       TestableCartesianGraph graph = TestableCartesianGraph(Bounds(-1,1,-1,1),graphDisplay,mockCalculator,coordinates: coordinates, coordinatesBuilder:testBuilder, equation: '2x',);
       await tester.pumpWidget(_makeTestable(graph));
@@ -143,8 +144,8 @@ void main() {
     group('plots equation',(){
       testWidgets('calculates y value with equation',(WidgetTester tester) async{
         await setup(tester);
-        verify(mockCalculator.calculate('2x', 0)).called(1);
-        verify(mockCalculator.calculate('2x', 1)).called(1);
+        verify(mockCalculator.calculateEquation('2x', 0)).called(1);
+        verify(mockCalculator.calculateEquation('2x', 1)).called(1);
       });
 
       testWidgets('display coordinates with equation',(WidgetTester tester) async{

@@ -1,8 +1,8 @@
 library cartesian_graph;
 
+import 'package:advanced_calculation/advanced_calculator.dart';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
-import 'package:cartesian_graph/src/calculate/coordinate_calculator.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,10 +39,10 @@ class CartesianGraph extends StatelessWidget{
     }
 
     if(equation != null){
-      CoordinateCalculator calculator = createCoordinateCalculator();
+      AdvancedCalculator calculator = createCoordinateCalculator();
       List<Coordinates> calculatedCoordinates = [];
       for(double xCoordinate in display.xCoordinates){
-        double yCoordinate = calculator.calculate(equation, xCoordinate);
+        double yCoordinate = calculator.calculateEquation(equation, xCoordinate);
         calculatedCoordinates.add(Coordinates(xCoordinate, yCoordinate));
       }
       _plotCoordinates(display, calculatedCoordinates);
@@ -65,8 +65,8 @@ class CartesianGraph extends StatelessWidget{
     return GraphDisplay.bounds(bounds,displaySize,density);
   }
 
-  CoordinateCalculator createCoordinateCalculator(){
-    return CoordinateCalculator();
+  AdvancedCalculator createCoordinateCalculator(){
+    return AdvancedCalculator();
   }
 
   @override
