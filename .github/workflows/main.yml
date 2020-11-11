@@ -11,6 +11,10 @@ on:
   pull_request:
     branches: [ main ]
 
+defaults:
+  run:
+    working-directory: cartesian_graph
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -21,15 +25,24 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Setup Java environment in order to build the Android app.
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          path: cartesian_graph
       - uses: actions/setup-java@v1
         with:
           java-version: '12.x'
+
+      #checkout advanced calculation
+      - uses: actions/checkout@v2
+        with:
+          repository: SE-691-Graphing-Calculator/advanced_calculation.git
+          path: advanced_calculation
+          ref: main
     
       # Setup the flutter environment.
       - uses: subosito/flutter-action@v1
         with:
-          channel: 'beta'
+          channel: 'stable'
     
       # Get flutter dependencies.
       - run: flutter pub get
