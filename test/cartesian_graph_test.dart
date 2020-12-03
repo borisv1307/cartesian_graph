@@ -33,7 +33,7 @@ class MockCalculator extends Mock implements AdvancedCalculator{}
 class TestableCartesianGraph extends CartesianGraph{
   final GraphDisplay _graphDisplay;
   final AdvancedCalculator coordinateCalculator;
-  TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation}): super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equation:equation);
+  TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation}): super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equations: [equation]);
 
   @override
   GraphDisplay createGraphDisplay(Bounds bounds, DisplaySize displaySize, int density){

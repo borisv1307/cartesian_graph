@@ -21,9 +21,10 @@ class CartesianGraph extends StatelessWidget{
   final Color lineColor;
   final Bounds bounds;
   final List<Coordinates> Function(List<double>) coordinatesBuilder;
-  final String equation;
+  final List<String> equations;
 
-  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder, this.equation});
+
+  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder, this.equations});
 
   Future<ui.Image> _makeImage(double containerWidth, double containerHeight){
     final c = Completer<ui.Image>();
@@ -38,14 +39,16 @@ class CartesianGraph extends StatelessWidget{
       _plotCoordinates(display, builderCoordinates);
     }
 
-    if(equation != null){
-      AdvancedCalculator calculator = createCoordinateCalculator();
-      List<Coordinates> calculatedCoordinates = [];
-      for(double xCoordinate in display.xCoordinates){
-        double yCoordinate = calculator.calculateEquation(equation, xCoordinate);
-        calculatedCoordinates.add(Coordinates(xCoordinate, yCoordinate));
+    for (int i = 0; i < equations.length; i++) {
+      if (equations[i] != null){
+        AdvancedCalculator calculator = createCoordinateCalculator();
+        List<Coordinates> calculatedCoordinates = [];
+        for(double xCoordinate in display.xCoordinates){
+          double yCoordinate = calculator.calculateEquation(equations[i], xCoordinate);
+          calculatedCoordinates.add(Coordinates(xCoordinate, yCoordinate));
+        }
+        _plotCoordinates(display, calculatedCoordinates);
       }
-      _plotCoordinates(display, calculatedCoordinates);
     }
 
     _plotCoordinates(display, coordinates);
