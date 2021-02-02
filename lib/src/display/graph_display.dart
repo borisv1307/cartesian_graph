@@ -103,13 +103,14 @@ class GraphDisplay{
   }
 
   void displayCursor(Coordinates cursorLocation){
+    PixelCluster cursor = _calculatePixelCluster(cursorLocation);
     int width = (24/lineWeight).round();
-    for(int i = (cursorLocation.x-width).toInt(); i<(cursorLocation.x+width).toInt(); i++){
-        _updatePixelCluster(PixelCluster(i, cursorLocation.y.toInt()), Colors.blue);
+    for(int i = (cursor.x-width).toInt(); i<(cursor.x+width).toInt(); i++){
+        _updatePixelCluster(PixelCluster(i, cursor.y.toInt()), Colors.blue);
     }
 
-    for(int i = (cursorLocation.y-width).toInt(); i<(cursorLocation.y+width).toInt(); i++){
-      _updatePixelCluster(PixelCluster(cursorLocation.x.toInt(), i), Colors.blue);
+    for(int i = (cursor.y-width).toInt(); i<(cursor.y+width).toInt(); i++){
+      _updatePixelCluster(PixelCluster(cursor.x.toInt(), i), Colors.blue);
     }
   }
 
