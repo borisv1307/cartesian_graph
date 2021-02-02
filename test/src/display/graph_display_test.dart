@@ -558,4 +558,83 @@ void main() {
       });
     });
   });
+
+  group('Displaying cursor',(){
+    group('Centered',(){
+      MockPixelMap mockPixelMap;
+      MockCoordinatePixelTranslator mockTranslator;
+
+      setUpAll((){
+        GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-1, 1, -1, 1), DisplaySize(3, 3), 1);
+        mockPixelMap = MockPixelMap();
+        graphDisplay.pixelMap = mockPixelMap;
+
+        mockTranslator = MockCoordinatePixelTranslator();
+        when(mockTranslator.calculatePixelCluster(Coordinates(0, 0))).thenReturn(PixelCluster(1, 1));
+        graphDisplay.translator = mockTranslator;
+
+        graphDisplay.displayCursor(Coordinates(0, 0));
+      });
+
+      test('should calculate center pixel',(){
+        verify(mockTranslator.calculatePixelCluster(any)).called(1);
+      });
+
+      test('should display correct center pixel',(){
+        var center = verify(mockPixelMap.updatePixel(1, 1, captureAny));
+        expect(center.captured[0].value, Colors.blue.value);
+      });
+
+      test('should display cross pattern',(){
+        var left = verify(mockPixelMap.updatePixel(1, 2, captureAny));
+        var right = verify(mockPixelMap.updatePixel(1, 0, captureAny));
+        var top = verify(mockPixelMap.updatePixel(2, 1, captureAny));
+        var bottom = verify(mockPixelMap.updatePixel(0, 1, captureAny));
+
+        expect(left.captured[0].value, Colors.blue.value);
+        expect(right.captured[0].value, Colors.blue.value);
+        expect(top.captured[0].value, Colors.blue.value);
+        expect(bottom.captured[0].value, Colors.blue.value);
+      });
+    });
+
+    group('Offset',(){
+      MockPixelMap mockPixelMap;
+      MockCoordinatePixelTranslator mockTranslator;
+
+      setUpAll((){
+        GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-2, 2, -2, 2), DisplaySize(6, 6), 1);
+        mockPixelMap = MockPixelMap();
+        graphDisplay.pixelMap = mockPixelMap;
+
+        mockTranslator = MockCoordinatePixelTranslator();
+        when(mockTranslator.calculatePixelCluster(Coordinates(1, 1))).thenReturn(PixelCluster(2, 4));
+        graphDisplay.translator = mockTranslator;
+
+        graphDisplay.displayCursor(Coordinates(1, 1));
+      });
+
+      test('should calculate center pixel',(){
+        verify(mockTranslator.calculatePixelCluster(any)).called(1);
+      });
+
+      test('should display correct center pixel',(){
+        var center = verify(mockPixelMap.updatePixel(2, 4, captureAny));
+        expect(center.captured[0].value, Colors.blue.value);
+      });
+
+      test('should display cross pattern',(){
+        var left = verify(mockPixelMap.updatePixel(2, 5, captureAny));
+        var right = verify(mockPixelMap.updatePixel(2, 3, captureAny));
+        var top = verify(mockPixelMap.updatePixel(3, 4, captureAny));
+        var bottom = verify(mockPixelMap.updatePixel(1, 4, captureAny));
+
+        expect(left.captured[0].value, Colors.blue.value);
+        expect(right.captured[0].value,Colors.blue.value);
+        expect(top.captured[0].value,Colors.blue.value);
+        expect(bottom.captured[0].value,Colors.blue.value);
+      });
+
+    });
+  });
 }
