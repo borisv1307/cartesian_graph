@@ -3,6 +3,7 @@ library cartesian_graph;
 import 'package:advanced_calculation/advanced_calculator.dart';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/pixel_location.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,7 @@ import 'dart:async';
 export 'cartesian_graph.dart' hide CartesianGraph;
 
 class CartesianGraph extends StatelessWidget{
+  final PixelLocation cursorPixelLocation;
   final List<Coordinates> coordinates;
   final Coordinates cursorLocation;
   final int density = 4;
@@ -24,14 +26,18 @@ class CartesianGraph extends StatelessWidget{
   final List<String> equations;
 
 
-  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder, this.equations});
+  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.cursorPixelLocation, this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder, this.equations});
 
   Future<ui.Image> _makeImage(double containerWidth, double containerHeight){
     final c = Completer<ui.Image>();
     GraphDisplay display = createGraphDisplay(this.bounds,DisplaySize(containerWidth,containerHeight),density);
     display.displayAxes(legendColor);
     if(cursorLocation != null){
-      display.displayCursor(cursorLocation);
+      display.displayCursorByCoordinates(cursorLocation);
+    }
+
+    if(cursorPixelLocation != null){
+      display.displayCursorByPixelLocation(cursorPixelLocation);
     }
 
     if(coordinatesBuilder != null){

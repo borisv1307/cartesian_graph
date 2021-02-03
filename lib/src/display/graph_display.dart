@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/pixel_location.dart';
+import 'package:cartesian_graph/src/display/cluster_location.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
-import 'package:cartesian_graph/src/display/pixel_cluster.dart';
 import 'package:cartesian_graph/src/display/pixel_map.dart';
 import 'package:cartesian_graph/src/display/translator/coordinate_pixel_translator.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class GraphDisplay{
     return graphDisplay;
   }
 
-  void _updatePixelCluster(PixelCluster cluster, Color color){
+  void _updatePixelCluster(ClusterLocation cluster, Color color){
     for(int i = cluster.x*lineWeight;i<((cluster.x+1)*lineWeight);i++){
       for(int j = cluster.y*lineWeight;j<((cluster.y+1)*lineWeight);j++){
         pixelMap.updatePixel(i, j, color);
@@ -37,14 +38,14 @@ class GraphDisplay{
     }
   }
 
-  PixelCluster _calculatePixelCluster(Coordinates coordinates){
-    return translator.calculatePixelCluster(coordinates);
+  ClusterLocation _calculatePixelCluster(Coordinates coordinates){
+    return translator.translateCoordinates(coordinates);
   }
 
   void plotSegment(Coordinates firstCoordinates, Coordinates secondCoordinates, Color color){
     if(this.bounds.isWithin(firstCoordinates) || this.bounds.isWithin(secondCoordinates)){
-      PixelCluster first = _calculatePixelCluster(firstCoordinates);
-      PixelCluster second = _calculatePixelCluster(secondCoordinates);
+      ClusterLocation first = _calculatePixelCluster(firstCoordinates);
+      ClusterLocation second = _calculatePixelCluster(secondCoordinates);
 
       int startX = first.x;
       int endX = second.x;
@@ -58,7 +59,7 @@ class GraphDisplay{
         endY = first.y;
       }
 
-      _updatePixelCluster(PixelCluster(startX, startY), color);
+      _updatePixelCluster(ClusterLocation(startX, startY), color);
 
       int ySpan = endY - startY;
       int xSpan = endX - startX;
@@ -79,7 +80,7 @@ class GraphDisplay{
       int x = startX + xDirection;
       for(int i = 0; i < xSlope; i++){
         for(int j = 0; j < ySlope; j++){
-          _updatePixelCluster(PixelCluster(x, y), color);
+          _updatePixelCluster(ClusterLocation(x, y), color);
           y+= yDirection;
         }
         x+= xDirection;
@@ -88,29 +89,38 @@ class GraphDisplay{
   }
 
   void displayAxes(Color color){
-    PixelCluster center = this.translator.calculatePixelCluster(Coordinates(0, 0));
+    ClusterLocation center = this.translator.translateCoordinates(Coordinates(0, 0));
 
     if(bounds.isYWithin(0)) {
       for (int i = 0; i < _numXPixelPoints; i++) {
-        _updatePixelCluster(PixelCluster(i, center.y), color);
+        _updatePixelCluster(ClusterLocation(i, center.y), color);
       }
     }
     if(bounds.isXWithin(0)) {
       for (int i = 0; i < _numYPixelPoints; i++) {
-        _updatePixelCluster(PixelCluster(center.x, i), color);
+        _updatePixelCluster(ClusterLocation(center.x, i), color);
       }
     }
   }
 
-  void displayCursor(Coordinates cursorLocation){
-    PixelCluster cursor = _calculatePixelCluster(cursorLocation);
+  void displayCursorByCoordinates(Coordinates cursorLocation){
+    ClusterLocation cursor = _calculatePixelCluster(cursorLocation);
+    _displayCursor(cursor);
+  }
+
+  void displayCursorByPixelLocation(PixelLocation location){
+    ClusterLocation cluster = ClusterLocation(location.x~/this.lineWeight, location.y~/this.lineWeight);
+    _displayCursor(cluster);
+  }
+
+  void _displayCursor(ClusterLocation location){
     int width = (24/lineWeight).round();
-    for(int i = (cursor.x-width).toInt(); i<(cursor.x+width).toInt(); i++){
-        _updatePixelCluster(PixelCluster(i, cursor.y.toInt()), Colors.blue);
+    for(int i = (location.x-width).toInt(); i<(location.x+width).toInt(); i++){
+      _updatePixelCluster(ClusterLocation(i, location.y.toInt()), Colors.blue);
     }
 
-    for(int i = (cursor.y-width).toInt(); i<(cursor.y+width).toInt(); i++){
-      _updatePixelCluster(PixelCluster(cursor.x.toInt(), i), Colors.blue);
+    for(int i = (location.y-width).toInt(); i<(location.y+width).toInt(); i++){
+      _updatePixelCluster(ClusterLocation(location.x.toInt(), i), Colors.blue);
     }
   }
 
