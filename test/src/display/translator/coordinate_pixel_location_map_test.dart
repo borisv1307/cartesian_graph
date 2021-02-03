@@ -1,6 +1,6 @@
 import 'package:cartesian_graph/coordinates.dart';
 import 'package:cartesian_graph/src/display/cluster_location.dart';
-import 'file:///C:/Users/Greg/IdeaProjects/se-calc/cartesian_graph/lib/src/display/translator/coordinate_pixel_location_map.dart';
+import 'package:cartesian_graph/src/display/translator/coordinate_pixel_location_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main(){
