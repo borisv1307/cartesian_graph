@@ -14,8 +14,8 @@ import 'dart:async';
 
 export 'cartesian_graph.dart' hide CartesianGraph;
 
+// ignore: must_be_immutable
 class CartesianGraph extends StatelessWidget{
-  final PixelLocation cursorPixelLocation;
   final List<Coordinates> coordinates;
   final Coordinates cursorLocation;
   final int density = 4;
@@ -24,20 +24,18 @@ class CartesianGraph extends StatelessWidget{
   final Bounds bounds;
   final List<Coordinates> Function(List<double>) coordinatesBuilder;
   final List<String> equations;
+  GraphDisplay display;
 
 
-  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.cursorPixelLocation, this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder, this.equations});
+  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation,this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder, this.equations});
 
   Future<ui.Image> _makeImage(double containerWidth, double containerHeight){
     final c = Completer<ui.Image>();
-    GraphDisplay display = createGraphDisplay(this.bounds,DisplaySize(containerWidth,containerHeight),density);
+    display = createGraphDisplay(this.bounds,DisplaySize(containerWidth,containerHeight),density);
     display.displayAxes(legendColor);
+
     if(cursorLocation != null){
       display.displayCursorByCoordinates(cursorLocation);
-    }
-
-    if(cursorPixelLocation != null){
-      display.displayCursorByPixelLocation(cursorPixelLocation);
     }
 
     if(coordinatesBuilder != null){
@@ -62,6 +60,10 @@ class CartesianGraph extends StatelessWidget{
     display.render(c.complete);
 
     return c.future;
+  }
+
+  Coordinates calculateCoordinates(PixelLocation location){
+    return display.calculateCoordinates(location);
   }
 
   void _plotCoordinates(GraphDisplay display, List<Coordinates> coordinates){

@@ -599,34 +599,14 @@ void main() {
       });
     });
 
-    group('Cursor by pixel location',(){
-      MockPixelMap mockPixelMap;
+    test('cursor can be calculated by pixel location',(){
+      MockCoordinatePixelTranslator mockTranslator = MockCoordinatePixelTranslator();
 
-      setUpAll((){
-        GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-2, 2, -2, 2), DisplaySize(6, 6), 1);
-        mockPixelMap = MockPixelMap();
-        graphDisplay.pixelMap = mockPixelMap;
-
-        graphDisplay.displayCursorByPixelLocation(PixelLocation(2, 4));
-      });
-
-      test('should display correct center pixel',(){
-        var center = verify(mockPixelMap.updatePixel(2, 4, captureAny));
-        expect(center.captured[0].value, Colors.blue.value);
-      });
-
-      test('should display cross pattern',(){
-        var left = verify(mockPixelMap.updatePixel(2, 5, captureAny));
-        var right = verify(mockPixelMap.updatePixel(2, 3, captureAny));
-        var top = verify(mockPixelMap.updatePixel(3, 4, captureAny));
-        var bottom = verify(mockPixelMap.updatePixel(1, 4, captureAny));
-
-        expect(left.captured[0].value, Colors.blue.value);
-        expect(right.captured[0].value,Colors.blue.value);
-        expect(top.captured[0].value,Colors.blue.value);
-        expect(bottom.captured[0].value,Colors.blue.value);
-      });
-
+      GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-2, 2, -2, 2), DisplaySize(5, 5), 1);
+      graphDisplay.translator = mockTranslator;
+      when(mockTranslator.translateCluster(ClusterLocation(2, 4))).thenReturn(Coordinates(3,4));
+      Coordinates coordinates = graphDisplay.calculateCoordinates(PixelLocation(2, 4));
+      expect(coordinates,Coordinates(3,4));
     });
   });
 }

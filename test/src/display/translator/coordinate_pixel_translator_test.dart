@@ -154,4 +154,16 @@ void main() {
     });
   });
 
+  group('Translate cluster',(){
+    CoordinatePixelTranslator translator;
+    setUpAll((){
+      translator = CoordinatePixelTranslator(Bounds(-2,3,-2,3),DisplaySize(4,4),1);
+    });
+
+    test('cluster exists',(){
+      Coordinates coordinates = translator.translateCluster(ClusterLocation(1, 1));
+      expect(coordinates, Coordinates(0, 0));
+    });
+  });
+
 }
