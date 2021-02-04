@@ -108,9 +108,10 @@ class GraphDisplay{
     _displayCursor(cursor);
   }
 
-  void displayCursorByPixelLocation(PixelLocation location){
+  Coordinates calculateCoordinates(PixelLocation location){
     ClusterLocation cluster = ClusterLocation(location.x~/this.lineWeight, location.y~/this.lineWeight);
-    _displayCursor(cluster);
+    Coordinates coordinates = translator.translateCluster(cluster);
+    return coordinates;
   }
 
   void _displayCursor(ClusterLocation location){

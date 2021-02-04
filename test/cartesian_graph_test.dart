@@ -19,7 +19,7 @@ class MockGraphDisplay extends Mock implements GraphDisplay {
   ui.Image _image;
   List<double> xCoordinates = [0,1];
 
-  MockGraphDisplay(this._image);
+  MockGraphDisplay([this._image]);
 
   @override
   void render(ImageDecoderCallback callback) async{
@@ -31,11 +31,12 @@ class MockGraphDisplay extends Mock implements GraphDisplay {
 class MockImage extends Mock implements ui.Image{}
 class MockCalculator extends Mock implements AdvancedCalculator{}
 
+// ignore: must_be_immutable
 class TestableCartesianGraph extends CartesianGraph{
   final GraphDisplay _graphDisplay;
   final AdvancedCalculator coordinateCalculator;
   TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation, Coordinates cursorLocation, PixelLocation cursorPixelLocation}):
-        super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equations: [equation],cursorLocation: cursorLocation, cursorPixelLocation: cursorPixelLocation);
+        super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equations: [equation],cursorLocation: cursorLocation);
 
   @override
   GraphDisplay createGraphDisplay(Bounds bounds, DisplaySize displaySize, int density){
@@ -161,11 +162,18 @@ void main() {
         await setup(tester);
         verify(graphDisplay.displayCursorByCoordinates(Coordinates(0,0))).called(1);
       });
+    });
+  });
 
-      testWidgets('displays cursor by pixel location',(WidgetTester tester) async{
-        await setup(tester);
-        verify(graphDisplay.displayCursorByPixelLocation(PixelLocation(1,1))).called(1);
-      });
+  group('Coordinate calculation',(){
+    test('coordinates are calculated',(){
+      MockGraphDisplay mockDisplay = MockGraphDisplay();
+
+      CartesianGraph graph = CartesianGraph(Bounds(0,10,0,10));
+      graph.display = mockDisplay;
+      when(mockDisplay.calculateCoordinates(PixelLocation(1, 1))).thenReturn(Coordinates(3, 2));
+      Coordinates coordinates = graph.calculateCoordinates(PixelLocation(1, 1));
+      expect(coordinates, Coordinates(3,2));
     });
   });
 }

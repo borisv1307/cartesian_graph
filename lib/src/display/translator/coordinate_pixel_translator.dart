@@ -76,4 +76,8 @@ class CoordinatePixelTranslator{
   ClusterLocation translateCoordinates(Coordinates coordinates) {
     return this.pixelLocations[coordinates];
   }
+
+  Coordinates translateCluster(ClusterLocation cluster) {
+    return this.pixelLocations.findCoordinates(cluster);
+  }
 }

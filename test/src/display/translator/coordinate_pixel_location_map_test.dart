@@ -47,4 +47,12 @@ void main(){
       expect(locationMap[Coordinates(1.4,1.7)], ClusterLocation(2,2));
     });
   });
+
+  group('Retrieves coordinates from cluster',(){
+    test('with exact match',(){
+      CoordinatePixelPointLocationMap locationMap = CoordinatePixelPointLocationMap();
+      locationMap[Coordinates(1,1)] = ClusterLocation(2, 2);
+      expect(locationMap.findCoordinates(ClusterLocation(2, 2)), Coordinates(1,1));
+    });
+  });
 }

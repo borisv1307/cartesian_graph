@@ -36,4 +36,9 @@ class CoordinatePixelPointLocationMap{
 
     return closest;
   }
+
+  Coordinates findCoordinates(ClusterLocation cluster){
+    Coordinates coordinates = locationMap.map((k,v) => MapEntry(v, k))[cluster];
+    return coordinates;
+  }
 }
