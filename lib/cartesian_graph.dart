@@ -3,7 +3,6 @@ library cartesian_graph;
 import 'package:advanced_calculation/advanced_calculator.dart';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
-import 'package:cartesian_graph/pixel_location.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
 import 'package:flutter/cupertino.dart';
@@ -60,10 +59,6 @@ class CartesianGraph extends StatelessWidget{
     display.render(c.complete);
 
     return c.future;
-  }
-
-  Coordinates calculateCoordinates(PixelLocation location){
-    return display.calculateCoordinates(location);
   }
 
   void _plotCoordinates(GraphDisplay display, List<Coordinates> coordinates){
