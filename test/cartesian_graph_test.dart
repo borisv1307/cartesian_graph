@@ -164,16 +164,4 @@ void main() {
       });
     });
   });
-
-  group('Coordinate calculation',(){
-    test('coordinates are calculated',(){
-      MockGraphDisplay mockDisplay = MockGraphDisplay();
-
-      CartesianGraph graph = CartesianGraph(Bounds(0,10,0,10));
-      graph.display = mockDisplay;
-      when(mockDisplay.calculateCoordinates(PixelLocation(1, 1))).thenReturn(Coordinates(3, 2));
-      Coordinates coordinates = graph.calculateCoordinates(PixelLocation(1, 1));
-      expect(coordinates, Coordinates(3,2));
-    });
-  });
 }
