@@ -5,6 +5,7 @@ import 'package:advanced_calculation/advanced_calculator.dart';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/cartesian_graph.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/pixel_location.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,7 +19,7 @@ class MockGraphDisplay extends Mock implements GraphDisplay {
   ui.Image _image;
   List<double> xCoordinates = [0,1];
 
-  MockGraphDisplay(this._image);
+  MockGraphDisplay([this._image]);
 
   @override
   void render(ImageDecoderCallback callback) async{
@@ -30,10 +31,12 @@ class MockGraphDisplay extends Mock implements GraphDisplay {
 class MockImage extends Mock implements ui.Image{}
 class MockCalculator extends Mock implements AdvancedCalculator{}
 
+// ignore: must_be_immutable
 class TestableCartesianGraph extends CartesianGraph{
   final GraphDisplay _graphDisplay;
   final AdvancedCalculator coordinateCalculator;
-  TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation}): super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equations: [equation]);
+  TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation, Coordinates cursorLocation, PixelLocation cursorPixelLocation}):
+        super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equations: [equation],cursorLocation: cursorLocation);
 
   @override
   GraphDisplay createGraphDisplay(Bounds bounds, DisplaySize displaySize, int density){
@@ -109,7 +112,8 @@ void main() {
       mockCalculator = MockCalculator();
       when(mockCalculator.calculateEquation('2x', any)).thenReturn(-1);
 
-      TestableCartesianGraph graph = TestableCartesianGraph(Bounds(-1,1,-1,1),graphDisplay,mockCalculator,coordinates: coordinates, coordinatesBuilder:testBuilder, equation: '2x',);
+      TestableCartesianGraph graph = TestableCartesianGraph(Bounds(-1,1,-1,1),graphDisplay,mockCalculator,coordinates: coordinates,
+        coordinatesBuilder:testBuilder, equation: '2x',cursorLocation: Coordinates(0,0),cursorPixelLocation: PixelLocation(1,1));
       await tester.pumpWidget(_makeTestable(graph));
       await tester.pumpAndSettle();    }
 
@@ -150,6 +154,13 @@ void main() {
       testWidgets('display coordinates with equation',(WidgetTester tester) async{
         await setup(tester);
         verify(graphDisplay.plotSegment(Coordinates(0,-1), Coordinates(1,-1), Colors.black)).called(1);
+      });
+    });
+
+    group('Cursor plotting',(){
+      testWidgets('displays cursor by coordinates',(WidgetTester tester) async{
+        await setup(tester);
+        verify(graphDisplay.displayCursorByCoordinates(Coordinates(0,0))).called(1);
       });
     });
   });

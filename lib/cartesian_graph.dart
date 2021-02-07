@@ -13,6 +13,7 @@ import 'dart:async';
 
 export 'cartesian_graph.dart' hide CartesianGraph;
 
+// ignore: must_be_immutable
 class CartesianGraph extends StatelessWidget{
   final List<Coordinates> coordinates;
   final Coordinates cursorLocation;
@@ -22,6 +23,7 @@ class CartesianGraph extends StatelessWidget{
   final Bounds bounds;
   final List<Coordinates> Function(List<double>) coordinatesBuilder;
   final List<String> equations;
+  GraphDisplay display;
   final int chosenEquationIndex;
 
 
@@ -29,10 +31,11 @@ class CartesianGraph extends StatelessWidget{
 
   Future<ui.Image> _makeImage(double containerWidth, double containerHeight){
     final c = Completer<ui.Image>();
-    GraphDisplay display = createGraphDisplay(this.bounds,DisplaySize(containerWidth,containerHeight),density);
+    display = createGraphDisplay(this.bounds,DisplaySize(containerWidth,containerHeight),density);
     display.displayAxes(legendColor);
+
     if(cursorLocation != null){
-      display.displayCursor(cursorLocation);
+      display.displayCursorByCoordinates(cursorLocation);
     }
 
     if(coordinatesBuilder != null){

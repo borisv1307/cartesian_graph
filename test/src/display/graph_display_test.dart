@@ -1,8 +1,9 @@
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/pixel_location.dart';
+import 'package:cartesian_graph/src/display/cluster_location.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
-import 'package:cartesian_graph/src/display/pixel_cluster.dart';
 import 'package:cartesian_graph/src/display/pixel_map.dart';
 import 'package:cartesian_graph/src/display/translator/coordinate_pixel_translator.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +46,8 @@ void main() {
       graphDisplay.pixelMap = mockPixelMap;
 
       translator = MockCoordinatePixelTranslator();
-      when(translator.calculatePixelCluster(Coordinates(0,0))).thenReturn(PixelCluster(1, 1));
-      when(translator.calculatePixelCluster(Coordinates(0,1))).thenReturn(PixelCluster(1, 2));
+      when(translator.translateCoordinates(Coordinates(0,0))).thenReturn(ClusterLocation(1, 1));
+      when(translator.translateCoordinates(Coordinates(0,1))).thenReturn(ClusterLocation(1, 2));
       graphDisplay.translator = translator;
 
       graphDisplay.plotSegment(Coordinates(0,0), Coordinates(0,1), Colors.black);
@@ -57,8 +58,8 @@ void main() {
     });
 
     test('should translate pixels',(){
-      verify(translator.calculatePixelCluster(Coordinates(0,0))).called(1);
-      verify(translator.calculatePixelCluster(Coordinates(0,1))).called(1);
+      verify(translator.translateCoordinates(Coordinates(0,0))).called(1);
+      verify(translator.translateCoordinates(Coordinates(0,1))).called(1);
     });
 
     test('should plot start point',(){
@@ -83,8 +84,8 @@ void main() {
       graphDisplay.pixelMap = mockPixelMap;
 
       mockTranslator = MockCoordinatePixelTranslator();
-      when(mockTranslator.calculatePixelCluster(Coordinates(0,0))).thenReturn(PixelCluster(1, 1));
-      when(mockTranslator.calculatePixelCluster(Coordinates(0,1))).thenReturn(PixelCluster(1, 2));
+      when(mockTranslator.translateCoordinates(Coordinates(0,0))).thenReturn(ClusterLocation(1, 1));
+      when(mockTranslator.translateCoordinates(Coordinates(0,1))).thenReturn(ClusterLocation(1, 2));
       graphDisplay.translator = mockTranslator;
 
       graphDisplay.plotSegment(Coordinates(0,0), Coordinates(0,1), Colors.black);
@@ -124,14 +125,14 @@ void main() {
           MockCoordinatePixelTranslator mockTranslator;
           setUp(() {
             mockTranslator = MockCoordinatePixelTranslator();
-            when(mockTranslator.calculatePixelCluster(Coordinates(0,0))).thenReturn(PixelCluster(2, 2));
-            when(mockTranslator.calculatePixelCluster(Coordinates(1,2))).thenReturn(PixelCluster(3, 4));
+            when(mockTranslator.translateCoordinates(Coordinates(0,0))).thenReturn(ClusterLocation(2, 2));
+            when(mockTranslator.translateCoordinates(Coordinates(1,2))).thenReturn(ClusterLocation(3, 4));
 
             mockPixelMap = plotSegment(Coordinates(0, 0), Coordinates(1, 2),mockTranslator);
           });
 
           test('should calculate 2 pixels',(){
-            verify(mockTranslator.calculatePixelCluster(any)).called(2);
+            verify(mockTranslator.translateCoordinates(any)).called(2);
           });
 
           test('should update 3 pixels', () {
@@ -152,14 +153,14 @@ void main() {
           MockCoordinatePixelTranslator mockTranslator;
           setUp(() {
             mockTranslator = MockCoordinatePixelTranslator();
-            when(mockTranslator.calculatePixelCluster(Coordinates(0,0))).thenReturn(PixelCluster(2, 2));
-            when(mockTranslator.calculatePixelCluster(Coordinates(-1,2))).thenReturn(PixelCluster(1, 4));
+            when(mockTranslator.translateCoordinates(Coordinates(0,0))).thenReturn(ClusterLocation(2, 2));
+            when(mockTranslator.translateCoordinates(Coordinates(-1,2))).thenReturn(ClusterLocation(1, 4));
 
             mockPixelMap = plotSegment(Coordinates(0, 0), Coordinates(-1, 2),mockTranslator);
           });
 
           test('should calculate 2 pixels',(){
-            verify(mockTranslator.calculatePixelCluster(any)).called(2);
+            verify(mockTranslator.translateCoordinates(any)).called(2);
           });
 
           test('should update 3 pixels', () {
@@ -184,14 +185,14 @@ void main() {
 
           setUp(() {
             mockTranslator = MockCoordinatePixelTranslator();
-            when(mockTranslator.calculatePixelCluster(Coordinates(0,0))).thenReturn(PixelCluster(2, 2));
-            when(mockTranslator.calculatePixelCluster(Coordinates(1,-2))).thenReturn(PixelCluster(3, 0));
+            when(mockTranslator.translateCoordinates(Coordinates(0,0))).thenReturn(ClusterLocation(2, 2));
+            when(mockTranslator.translateCoordinates(Coordinates(1,-2))).thenReturn(ClusterLocation(3, 0));
 
             mockPixelMap = plotSegment(Coordinates(0, 0), Coordinates(1, -2),mockTranslator);
           });
 
           test('should calculate 2 pixels',(){
-            verify(mockTranslator.calculatePixelCluster(any)).called(2);
+            verify(mockTranslator.translateCoordinates(any)).called(2);
           });
 
           test('should update 3 pixels', () {
@@ -213,8 +214,8 @@ void main() {
 
           setUp(() {
             mockTranslator = MockCoordinatePixelTranslator();
-            when(mockTranslator.calculatePixelCluster(Coordinates(0,0))).thenReturn(PixelCluster(2, 2));
-            when(mockTranslator.calculatePixelCluster(Coordinates(-1,-2))).thenReturn(PixelCluster(1, 0));
+            when(mockTranslator.translateCoordinates(Coordinates(0,0))).thenReturn(ClusterLocation(2, 2));
+            when(mockTranslator.translateCoordinates(Coordinates(-1,-2))).thenReturn(ClusterLocation(1, 0));
 
             mockPixelMap = plotSegment(Coordinates(0, 0), Coordinates(-1, -2),mockTranslator);
           });
@@ -239,14 +240,14 @@ void main() {
         MockCoordinatePixelTranslator mockTranslator;
         setUp(() {
           mockTranslator = MockCoordinatePixelTranslator();
-          when(mockTranslator.calculatePixelCluster(Coordinates(1,-2))).thenReturn(PixelCluster(3,0));
-          when(mockTranslator.calculatePixelCluster(Coordinates(2,-1))).thenReturn(PixelCluster(4, 1));
+          when(mockTranslator.translateCoordinates(Coordinates(1,-2))).thenReturn(ClusterLocation(3,0));
+          when(mockTranslator.translateCoordinates(Coordinates(2,-1))).thenReturn(ClusterLocation(4, 1));
 
           mockPixelMap = plotSegment(Coordinates(1, -2), Coordinates(2, -1),mockTranslator);
         });
 
         test('should calculate 2 pixels',(){
-          verify(mockTranslator.calculatePixelCluster(any)).called(2);
+          verify(mockTranslator.translateCoordinates(any)).called(2);
         });
 
         test('should update endpoints', () {
@@ -262,15 +263,15 @@ void main() {
         MockCoordinatePixelTranslator mockTranslator;
         setUpAll(() {
           mockTranslator = MockCoordinatePixelTranslator();
-          when(mockTranslator.calculatePixelCluster(Coordinates(-1,-1))).thenReturn(PixelCluster(1, 1));
-          when(mockTranslator.calculatePixelCluster(Coordinates(1,1))).thenReturn(PixelCluster(3, 3));
+          when(mockTranslator.translateCoordinates(Coordinates(-1,-1))).thenReturn(ClusterLocation(1, 1));
+          when(mockTranslator.translateCoordinates(Coordinates(1,1))).thenReturn(ClusterLocation(3, 3));
 
           mockPixelMap = plotSegment(Coordinates(-1, -1), Coordinates(1, 1),mockTranslator);
         });
 
         test('should calculate 2 pixels',(){
-          verify(mockTranslator.calculatePixelCluster(Coordinates(-1,-1))).called(1);
-          verify(mockTranslator.calculatePixelCluster(Coordinates(1,1))).called(1);
+          verify(mockTranslator.translateCoordinates(Coordinates(-1,-1))).called(1);
+          verify(mockTranslator.translateCoordinates(Coordinates(1,1))).called(1);
         });
 
         test('should connect endpoints', () {
@@ -293,15 +294,15 @@ void main() {
         MockCoordinatePixelTranslator mockTranslator;
         setUpAll(() {
           mockTranslator = MockCoordinatePixelTranslator();
-          when(mockTranslator.calculatePixelCluster(Coordinates(-1,-2))).thenReturn(PixelCluster(1, 0));
-          when(mockTranslator.calculatePixelCluster(Coordinates(1,2))).thenReturn(PixelCluster(3, 4));
+          when(mockTranslator.translateCoordinates(Coordinates(-1,-2))).thenReturn(ClusterLocation(1, 0));
+          when(mockTranslator.translateCoordinates(Coordinates(1,2))).thenReturn(ClusterLocation(3, 4));
 
           mockPixelMap = plotSegment(Coordinates(-1, -2), Coordinates(1, 2),mockTranslator);
         });
 
         test('should calculate 2 pixels',(){
-          verify(mockTranslator.calculatePixelCluster(Coordinates(-1,-2))).called(1);
-          verify(mockTranslator.calculatePixelCluster(Coordinates(1,2))).called(1);
+          verify(mockTranslator.translateCoordinates(Coordinates(-1,-2))).called(1);
+          verify(mockTranslator.translateCoordinates(Coordinates(1,2))).called(1);
         });
 
         test('should connect endpoints', () {
@@ -326,15 +327,15 @@ void main() {
       MockCoordinatePixelTranslator mockTranslator;
       setUpAll(() {
         mockTranslator = MockCoordinatePixelTranslator();
-        when(mockTranslator.calculatePixelCluster(Coordinates(-1,1))).thenReturn(PixelCluster(1, 3));
-        when(mockTranslator.calculatePixelCluster(Coordinates(1,1))).thenReturn(PixelCluster(3, 3));
+        when(mockTranslator.translateCoordinates(Coordinates(-1,1))).thenReturn(ClusterLocation(1, 3));
+        when(mockTranslator.translateCoordinates(Coordinates(1,1))).thenReturn(ClusterLocation(3, 3));
 
         mockPixelMap = plotSegment(Coordinates(-1, 1), Coordinates(1, 1),mockTranslator);
       });
 
       test('should calculate 2 pixels',(){
-        verify(mockTranslator.calculatePixelCluster(Coordinates(-1,1))).called(1);
-        verify(mockTranslator.calculatePixelCluster(Coordinates(1,1))).called(1);
+        verify(mockTranslator.translateCoordinates(Coordinates(-1,1))).called(1);
+        verify(mockTranslator.translateCoordinates(Coordinates(1,1))).called(1);
       });
 
       test('should connect endpoints', () {
@@ -356,15 +357,15 @@ void main() {
       MockCoordinatePixelTranslator mockTranslator;
       setUpAll(() {
         mockTranslator = MockCoordinatePixelTranslator();
-        when(mockTranslator.calculatePixelCluster(Coordinates(1,0))).thenReturn(PixelCluster(3, 2));
-        when(mockTranslator.calculatePixelCluster(Coordinates(1,2))).thenReturn(PixelCluster(3, 4));
+        when(mockTranslator.translateCoordinates(Coordinates(1,0))).thenReturn(ClusterLocation(3, 2));
+        when(mockTranslator.translateCoordinates(Coordinates(1,2))).thenReturn(ClusterLocation(3, 4));
 
         mockPixelMap = plotSegment(Coordinates(1, 0), Coordinates(1, 2),mockTranslator);
       });
 
       test('should calculate 2 pixels',(){
-        verify(mockTranslator.calculatePixelCluster(Coordinates(1,0))).called(1);
-        verify(mockTranslator.calculatePixelCluster(Coordinates(1,2))).called(1);
+        verify(mockTranslator.translateCoordinates(Coordinates(1,0))).called(1);
+        verify(mockTranslator.translateCoordinates(Coordinates(1,2))).called(1);
       });
 
       test('should connect endpoints', () {
@@ -405,14 +406,14 @@ void main() {
         graphDisplay.pixelMap = mockPixelMap;
 
         mockTranslator = MockCoordinatePixelTranslator();
-        when(mockTranslator.calculatePixelCluster(Coordinates(0,0))).thenReturn(PixelCluster(1, 1));
+        when(mockTranslator.translateCoordinates(Coordinates(0,0))).thenReturn(ClusterLocation(1, 1));
         graphDisplay.translator = mockTranslator;
 
         graphDisplay.displayAxes(Colors.black);
       });
 
       test('should calculate center pixel',(){
-        verify(mockTranslator.calculatePixelCluster(any)).called(1);
+        verify(mockTranslator.translateCoordinates(any)).called(1);
       });
 
       test('should display intersection',(){
@@ -452,14 +453,14 @@ void main() {
         graphDisplay.pixelMap = mockPixelMap;
 
         mockTranslator = MockCoordinatePixelTranslator();
-        when(mockTranslator.calculatePixelCluster(Coordinates(0,0))).thenReturn(PixelCluster(0, 2));
+        when(mockTranslator.translateCoordinates(Coordinates(0,0))).thenReturn(ClusterLocation(0, 2));
         graphDisplay.translator = mockTranslator;
 
         graphDisplay.displayAxes(Colors.black);
       });
 
       test('should calculate center pixel',(){
-        verify(mockTranslator.calculatePixelCluster(any)).called(1);
+        verify(mockTranslator.translateCoordinates(any)).called(1);
       });
 
       test('should display intersection',(){
@@ -498,14 +499,14 @@ void main() {
         graphDisplay.pixelMap = mockPixelMap;
 
         mockTranslator = MockCoordinatePixelTranslator();
-        when(mockTranslator.calculatePixelCluster(Coordinates(0,0))).thenReturn(PixelCluster(1, 0));
+        when(mockTranslator.translateCoordinates(Coordinates(0,0))).thenReturn(ClusterLocation(1, 0));
         graphDisplay.translator = mockTranslator;
 
         graphDisplay.displayAxes(Colors.black);
       });
 
       test('should calculate center pixel',(){
-        verify(mockTranslator.calculatePixelCluster(any)).called(1);
+        verify(mockTranslator.translateCoordinates(any)).called(1);
       });
 
       test('should display y axis',(){
@@ -533,14 +534,14 @@ void main() {
         graphDisplay.pixelMap = mockPixelMap;
 
         mockTranslator = MockCoordinatePixelTranslator();
-        when(mockTranslator.calculatePixelCluster(Coordinates(0,0))).thenReturn(PixelCluster(0, 1));
+        when(mockTranslator.translateCoordinates(Coordinates(0,0))).thenReturn(ClusterLocation(0, 1));
         graphDisplay.translator = mockTranslator;
 
         graphDisplay.displayAxes(Colors.black);
       });
 
       test('should calculate center pixel',(){
-        verify(mockTranslator.calculatePixelCluster(any)).called(1);
+        verify(mockTranslator.translateCoordinates(any)).called(1);
       });
 
       test('should display x axis',(){
@@ -556,6 +557,56 @@ void main() {
       test('should not display other points',(){
         verifyNever(mockPixelMap.updatePixel(any,any,any));
       });
+    });
+  });
+
+  group('Displaying cursor',(){
+    group('Centered',(){
+      MockPixelMap mockPixelMap;
+      MockCoordinatePixelTranslator mockTranslator;
+
+      setUpAll((){
+        GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-1, 1, -1, 1), DisplaySize(3, 3), 1);
+        mockPixelMap = MockPixelMap();
+        graphDisplay.pixelMap = mockPixelMap;
+
+        mockTranslator = MockCoordinatePixelTranslator();
+        when(mockTranslator.translateCoordinates(Coordinates(0, 0))).thenReturn(ClusterLocation(1, 1));
+        graphDisplay.translator = mockTranslator;
+
+        graphDisplay.displayCursorByCoordinates(Coordinates(0, 0));
+      });
+
+      test('should calculate center pixel',(){
+        verify(mockTranslator.translateCoordinates(any)).called(1);
+      });
+
+      test('should display correct center pixel',(){
+        var center = verify(mockPixelMap.updatePixel(1, 1, captureAny));
+        expect(center.captured[0].value, Colors.blue.value);
+      });
+
+      test('should display cross pattern',(){
+        var left = verify(mockPixelMap.updatePixel(1, 2, captureAny));
+        var right = verify(mockPixelMap.updatePixel(1, 0, captureAny));
+        var top = verify(mockPixelMap.updatePixel(2, 1, captureAny));
+        var bottom = verify(mockPixelMap.updatePixel(0, 1, captureAny));
+
+        expect(left.captured[0].value, Colors.blue.value);
+        expect(right.captured[0].value, Colors.blue.value);
+        expect(top.captured[0].value, Colors.blue.value);
+        expect(bottom.captured[0].value, Colors.blue.value);
+      });
+    });
+
+    test('cursor can be calculated by pixel location',(){
+      MockCoordinatePixelTranslator mockTranslator = MockCoordinatePixelTranslator();
+
+      GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-2, 2, -2, 2), DisplaySize(5, 5), 1);
+      graphDisplay.translator = mockTranslator;
+      when(mockTranslator.translateCluster(ClusterLocation(2, 4))).thenReturn(Coordinates(3,4));
+      Coordinates coordinates = graphDisplay.calculateCoordinates(PixelLocation(2, 4));
+      expect(coordinates,Coordinates(3,4));
     });
   });
 }
