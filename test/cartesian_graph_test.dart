@@ -35,8 +35,8 @@ class MockCalculator extends Mock implements AdvancedCalculator{}
 class TestableCartesianGraph extends CartesianGraph{
   final GraphDisplay _graphDisplay;
   final AdvancedCalculator coordinateCalculator;
-  TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation, Coordinates cursorLocation, PixelLocation cursorPixelLocation}):
-        super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equations: [equation],cursorLocation: cursorLocation);
+  TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation, Coordinates cursorLocation, PixelLocation cursorPixelLocation,Color cursorColor=Colors.blue}):
+        super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equations: [equation],cursorLocation: cursorLocation,cursorColor: cursorColor);
 
   @override
   GraphDisplay createGraphDisplay(Bounds bounds, DisplaySize displaySize, int density){
@@ -115,7 +115,8 @@ void main() {
       TestableCartesianGraph graph = TestableCartesianGraph(Bounds(-1,1,-1,1),graphDisplay,mockCalculator,coordinates: coordinates,
         coordinatesBuilder:testBuilder, equation: '2x',cursorLocation: Coordinates(0,0),cursorPixelLocation: PixelLocation(1,1));
       await tester.pumpWidget(_makeTestable(graph));
-      await tester.pumpAndSettle();    }
+      await tester.pumpAndSettle();
+    }
 
     testWidgets(('plots provided coordinates as segments'), (WidgetTester tester) async{
       await setup(tester);
@@ -160,7 +161,20 @@ void main() {
     group('Cursor plotting',(){
       testWidgets('displays cursor by coordinates',(WidgetTester tester) async{
         await setup(tester);
-        verify(graphDisplay.displayCursorByCoordinates(Coordinates(0,0))).called(1);
+        verify(graphDisplay.displayCursorByCoordinates(Coordinates(0,0),Colors.blue)).called(1);
+      });
+
+      testWidgets('displays cursor with specified color',(WidgetTester tester) async{
+        graphDisplay = MockGraphDisplay(await _createMockImage());
+        mockCalculator = MockCalculator();
+        when(mockCalculator.calculateEquation('2x', any)).thenReturn(-1);
+
+        TestableCartesianGraph graph = TestableCartesianGraph(Bounds(-1,1,-1,1),graphDisplay,mockCalculator,coordinates: coordinates,
+            coordinatesBuilder:testBuilder, equation: '2x',cursorLocation: Coordinates(0,0),cursorPixelLocation: PixelLocation(1,1),cursorColor: Colors.red,);
+        await tester.pumpWidget(_makeTestable(graph));
+        await tester.pumpAndSettle();
+
+        verify(graphDisplay.displayCursorByCoordinates(Coordinates(0,0),Colors.red)).called(1);
       });
     });
   });

@@ -103,9 +103,9 @@ class GraphDisplay{
     }
   }
 
-  void displayCursorByCoordinates(Coordinates cursorLocation){
+  void displayCursorByCoordinates(Coordinates cursorLocation,Color color){
     ClusterLocation cursor = _calculatePixelCluster(cursorLocation);
-    _displayCursor(cursor);
+    _displayCursor(cursor,color);
   }
 
   Coordinates calculateCoordinates(PixelLocation location){
@@ -114,14 +114,14 @@ class GraphDisplay{
     return coordinates;
   }
 
-  void _displayCursor(ClusterLocation location){
+  void _displayCursor(ClusterLocation location, Color color){
     int width = (24/lineWeight).round();
     for(int i = (location.x-width).toInt(); i<(location.x+width).toInt(); i++){
-      _updatePixelCluster(ClusterLocation(i, location.y.toInt()), Colors.blue);
+      _updatePixelCluster(ClusterLocation(i, location.y.toInt()), color);
     }
 
     for(int i = (location.y-width).toInt(); i<(location.y+width).toInt(); i++){
-      _updatePixelCluster(ClusterLocation(location.x.toInt(), i), Colors.blue);
+      _updatePixelCluster(ClusterLocation(location.x.toInt(), i), color);
     }
   }
 
