@@ -574,7 +574,7 @@ void main() {
         when(mockTranslator.translateCoordinates(Coordinates(0, 0))).thenReturn(ClusterLocation(1, 1));
         graphDisplay.translator = mockTranslator;
 
-        graphDisplay.displayCursorByCoordinates(Coordinates(0, 0));
+        graphDisplay.displayCursorByCoordinates(Coordinates(0, 0),Colors.blue);
       });
 
       test('should calculate center pixel',(){
