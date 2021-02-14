@@ -27,7 +27,7 @@ class CartesianGraph extends StatelessWidget{
   final int chosenEquationIndex;
 
 
-  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder, this.equations, this.chosenEquationIndex = 0});
+  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.lineColor = Colors.black, this.coordinatesBuilder, this.equations, this.chosenEquationIndex = -1});
 
   Future<ui.Image> _makeImage(double containerWidth, double containerHeight){
     final c = Completer<ui.Image>();
