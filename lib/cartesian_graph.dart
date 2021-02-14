@@ -24,10 +24,11 @@ class CartesianGraph extends StatelessWidget{
   final List<Coordinates> Function(List<double>) coordinatesBuilder;
   final List<String> equations;
   GraphDisplay display;
+  final int chosenEquationIndex;
   final Color cursorColor;
 
 
-  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation,this.legendColor = Colors.blueGrey, this.cursorColor = Colors.blue, this.lineColor = Colors.black, this.coordinatesBuilder, this.equations});
+  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.cursorColor = Colors.blue, this.lineColor = Colors.black, this.coordinatesBuilder, this.equations, this.chosenEquationIndex = -1});
 
   Future<ui.Image> _makeImage(double containerWidth, double containerHeight){
     final c = Completer<ui.Image>();
@@ -51,7 +52,12 @@ class CartesianGraph extends StatelessWidget{
           double yCoordinate = calculator.calculateEquation(equations[i], xCoordinate);
           calculatedCoordinates.add(Coordinates(xCoordinate, yCoordinate));
         }
-        _plotCoordinates(display, calculatedCoordinates);
+        if (i == chosenEquationIndex) {
+          _plotChosenCoordinates(display, calculatedCoordinates);
+        }
+        else {
+          _plotCoordinates(display, calculatedCoordinates);
+        }
       }
     }
 
@@ -60,6 +66,12 @@ class CartesianGraph extends StatelessWidget{
     display.render(c.complete);
 
     return c.future;
+  }
+
+  void _plotChosenCoordinates(GraphDisplay display, List<Coordinates> coordinates){
+    for(int i = 0; i< coordinates.length-1;i++){
+      display.plotSegment(coordinates[i],coordinates[i+1], Colors.red);
+    }
   }
 
   void _plotCoordinates(GraphDisplay display, List<Coordinates> coordinates){
