@@ -96,7 +96,7 @@ class CartesianGraph extends StatelessWidget{
       builder: (BuildContext context, BoxConstraints constraints){
         return Container(
             child: FutureBuilder<ui.Image>(
-              future: _makeImage(constraints.maxWidth * devicePixelRatio,constraints.maxHeight),
+              future: _makeImage(constraints.maxWidth * devicePixelRatio,constraints.maxHeight * devicePixelRatio),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return RawImage(
