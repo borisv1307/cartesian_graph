@@ -1,6 +1,6 @@
 import 'dart:ui';
-import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/graph_bounds.dart';
 import 'package:cartesian_graph/pixel_location.dart';
 import 'package:cartesian_graph/src/display/cluster_location.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
@@ -17,12 +17,12 @@ class GraphDisplay{
   final int _numXPixelPoints;
   final int _numYPixelPoints;
   CoordinatePixelTranslator translator;
-  final Bounds bounds;
+  final GraphBounds bounds;
   final List<double> xCoordinates;
 
   GraphDisplay._internal(this.pixelMap, this.lineWeight, this._numXPixelPoints, this._numYPixelPoints, this.translator, this.bounds, this.xCoordinates);
 
-  factory GraphDisplay.bounds(Bounds bounds, DisplaySize displaySize, int density){
+  factory GraphDisplay.bounds(GraphBounds bounds, DisplaySize displaySize, int density){
     PixelMap pixelMap = PixelMap(displaySize.width.toInt(),displaySize.height.toInt(), Color.fromRGBO(170, 200, 154, 1));
     CoordinatePixelTranslator translator = CoordinatePixelTranslator(bounds,displaySize,density);
     GraphDisplay graphDisplay =  GraphDisplay._internal(pixelMap, density, (displaySize.width/density).round(),(displaySize.height/density).round(),translator, bounds,translator.xCoordinates);

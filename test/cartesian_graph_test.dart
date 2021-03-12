@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:advanced_calculation/advanced_calculator.dart';
-import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/cartesian_graph.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/graph_bounds.dart';
+import 'package:cartesian_graph/line.dart';
 import 'package:cartesian_graph/pixel_location.dart';
+import 'package:cartesian_graph/segment_bounds.dart';
+import 'package:cartesian_graph/src/coordinates_calculator.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,24 +31,20 @@ class MockGraphDisplay extends Mock implements GraphDisplay {
 }
 
 class MockImage extends Mock implements ui.Image{}
-class MockCalculator extends Mock implements AdvancedCalculator{}
+class MockCalculator extends Mock implements CoordinatesCalculator{}
 
 // ignore: must_be_immutable
 class TestableCartesianGraph extends CartesianGraph{
   final GraphDisplay _graphDisplay;
-  final AdvancedCalculator coordinateCalculator;
-  TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation, Coordinates cursorLocation, PixelLocation cursorPixelLocation,Color cursorColor=Colors.blue}):
-        super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equations: [equation],cursorLocation: cursorLocation,cursorColor: cursorColor);
+  TestableCartesianGraph(GraphBounds bounds, this._graphDisplay, CoordinatesCalculator coordinatesCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,lines, Coordinates cursorLocation, PixelLocation cursorPixelLocation,Color cursorColor=Colors.blue}):
+        super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, lines: lines,cursorLocation: cursorLocation,cursorColor: cursorColor, coordinatesCalculator: coordinatesCalculator);
 
   @override
-  GraphDisplay createGraphDisplay(Bounds bounds, DisplaySize displaySize, int density){
+  GraphDisplay createGraphDisplay(GraphBounds bounds, DisplaySize displaySize, int density){
     return _graphDisplay;
   }
 
-  @override
-  AdvancedCalculator createCoordinateCalculator(){
-    return coordinateCalculator;
-  }
+
 }
 void main() {
   Widget _makeTestable(CartesianGraph graph){
@@ -63,12 +61,12 @@ void main() {
   group('Graph Display', (){
 
     test('is created',(){
-      CartesianGraph cartesianGraph = CartesianGraph(Bounds(-1,1,-1,1));
-      expect(cartesianGraph.createGraphDisplay(Bounds(-1,1,-1,1), DisplaySize(2,2), 1),isInstanceOf<GraphDisplay>());
+      CartesianGraph cartesianGraph = CartesianGraph(GraphBounds(-1,1,-1,1));
+      expect(cartesianGraph.createGraphDisplay(GraphBounds(-1,1,-1,1), DisplaySize(2,2), 1),isInstanceOf<GraphDisplay>());
     });
 
     testWidgets(('is present'), (WidgetTester tester) async{
-      Bounds expectedBounds = Bounds(-1,1,-1,1);
+      GraphBounds expectedBounds = GraphBounds(-1,1,-1,1);
       await tester.pumpWidget(_makeTestable(TestableCartesianGraph(expectedBounds,MockGraphDisplay(await _createMockImage()),MockCalculator())));
       await tester.pumpAndSettle();
 
@@ -80,14 +78,14 @@ void main() {
 
   testWidgets(('Cartesian Graph initially shows progress indicator'), (WidgetTester tester) async{
     MockGraphDisplay mockGraphDisplay = MockGraphDisplay(await _createMockImage());
-    await tester.pumpWidget(_makeTestable(TestableCartesianGraph(Bounds(-1,1,-1,1), mockGraphDisplay,MockCalculator())));
+    await tester.pumpWidget(_makeTestable(TestableCartesianGraph(GraphBounds(-1,1,-1,1), mockGraphDisplay,MockCalculator())));
     expect(find.byType(CircularProgressIndicator),findsOneWidget);
   });
 
   testWidgets(('Cartesian Graph displays image'), (WidgetTester tester) async{
     var mockImage = await _createMockImage();
     MockGraphDisplay mockGraphDisplay = MockGraphDisplay(mockImage);
-    await tester.pumpWidget(_makeTestable(TestableCartesianGraph(Bounds(-1,1,-1,1),mockGraphDisplay,MockCalculator())));
+    await tester.pumpWidget(_makeTestable(TestableCartesianGraph(GraphBounds(-1,1,-1,1),mockGraphDisplay,MockCalculator())));
     await tester.pumpAndSettle();
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(find.byType(RawImage), findsNWidgets(1));
@@ -110,10 +108,10 @@ void main() {
     Future setup(WidgetTester tester) async{
       graphDisplay = MockGraphDisplay(await _createMockImage());
       mockCalculator = MockCalculator();
-      when(mockCalculator.calculateEquation('2x', any)).thenReturn(-1);
+      when(mockCalculator.calculate('2x', any, any)).thenReturn([Coordinates(0,-1), Coordinates(1,-1)]);
 
-      TestableCartesianGraph graph = TestableCartesianGraph(Bounds(-1,1,-1,1),graphDisplay,mockCalculator,coordinates: coordinates,
-        coordinatesBuilder:testBuilder, equation: '2x',cursorLocation: Coordinates(0,0),cursorPixelLocation: PixelLocation(1,1));
+      TestableCartesianGraph graph = TestableCartesianGraph(GraphBounds(-1,1,-1,1),graphDisplay,mockCalculator,coordinates: coordinates,
+        coordinatesBuilder:testBuilder, lines: [Line('2x',segmentBounds: SegmentBounds(xMin:0))],cursorLocation: Coordinates(0,0),cursorPixelLocation: PixelLocation(1,1));
       await tester.pumpWidget(_makeTestable(graph));
       await tester.pumpAndSettle();
     }
@@ -148,8 +146,7 @@ void main() {
     group('plots equation',(){
       testWidgets('calculates y value with equation',(WidgetTester tester) async{
         await setup(tester);
-        verify(mockCalculator.calculateEquation('2x', 0)).called(1);
-        verify(mockCalculator.calculateEquation('2x', 1)).called(1);
+        verify(mockCalculator.calculate('2x', [0,1], SegmentBounds(xMin:0))).called(1);
       });
 
       testWidgets('display coordinates with equation',(WidgetTester tester) async{
@@ -167,10 +164,10 @@ void main() {
       testWidgets('displays cursor with specified color',(WidgetTester tester) async{
         graphDisplay = MockGraphDisplay(await _createMockImage());
         mockCalculator = MockCalculator();
-        when(mockCalculator.calculateEquation('2x', any)).thenReturn(-1);
+        when(mockCalculator.calculate('2x', any,any)).thenReturn([Coordinates(-1, 1)]);
 
-        TestableCartesianGraph graph = TestableCartesianGraph(Bounds(-1,1,-1,1),graphDisplay,mockCalculator,coordinates: coordinates,
-            coordinatesBuilder:testBuilder, equation: '2x',cursorLocation: Coordinates(0,0),cursorPixelLocation: PixelLocation(1,1),cursorColor: Colors.red,);
+        TestableCartesianGraph graph = TestableCartesianGraph(GraphBounds(-1,1,-1,1),graphDisplay,mockCalculator,coordinates: coordinates,
+            coordinatesBuilder:testBuilder, lines: [Line('2x')],cursorLocation: Coordinates(0,0),cursorPixelLocation: PixelLocation(1,1),cursorColor: Colors.red,);
         await tester.pumpWidget(_makeTestable(graph));
         await tester.pumpAndSettle();
 

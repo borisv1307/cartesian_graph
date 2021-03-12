@@ -1,5 +1,5 @@
-import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/graph_bounds.dart';
 import 'package:cartesian_graph/pixel_location.dart';
 import 'package:cartesian_graph/src/display/cluster_location.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
@@ -17,7 +17,7 @@ void main() {
   group('Underlying Pixel Map', (){
     GraphDisplay graphDisplay;
     setUpAll((){
-      graphDisplay = GraphDisplay.bounds(Bounds(-1,1,-2,2),DisplaySize(5,15),2);
+      graphDisplay = GraphDisplay.bounds(GraphBounds(-1,1,-2,2),DisplaySize(5,15),2);
     });
 
     test('should have specified width', () {
@@ -31,7 +31,7 @@ void main() {
 
 
   test('Provides generated x coordinates',(){
-    GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-1,1,-1,1),DisplaySize(3,3),1);
+    GraphDisplay graphDisplay = GraphDisplay.bounds(GraphBounds(-1,1,-1,1),DisplaySize(3,3),1);
     expect(graphDisplay.translator.xCoordinates, graphDisplay.xCoordinates);
   });
 
@@ -41,7 +41,7 @@ void main() {
     MockPixelMap mockPixelMap;
     MockCoordinatePixelTranslator translator;
     setUp((){
-      graphDisplay = GraphDisplay.bounds(Bounds(-1,1,-1,1),DisplaySize(3,3),1);
+      graphDisplay = GraphDisplay.bounds(GraphBounds(-1,1,-1,1),DisplaySize(3,3),1);
       mockPixelMap = MockPixelMap();
       graphDisplay.pixelMap = mockPixelMap;
 
@@ -79,7 +79,7 @@ void main() {
     MockPixelMap mockPixelMap;
     MockCoordinatePixelTranslator mockTranslator;
     setUp((){
-      GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-1,1,-1,1),DisplaySize(6,6),2);
+      GraphDisplay graphDisplay = GraphDisplay.bounds(GraphBounds(-1,1,-1,1),DisplaySize(6,6),2);
       mockPixelMap = MockPixelMap();
       graphDisplay.pixelMap = mockPixelMap;
 
@@ -110,7 +110,7 @@ void main() {
 
   group('Segment connection',(){
     MockPixelMap plotSegment(Coordinates start, Coordinates end, MockCoordinatePixelTranslator mockTranslator){
-      GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-2,2,-2,2),DisplaySize(5,5),1);
+      GraphDisplay graphDisplay = GraphDisplay.bounds(GraphBounds(-2,2,-2,2),DisplaySize(5,5),1);
       MockPixelMap mockPixelMap = MockPixelMap();
       graphDisplay.pixelMap = mockPixelMap;
       graphDisplay.translator = mockTranslator;
@@ -387,7 +387,7 @@ void main() {
 
   test('Segments are entirely out of bounds are not displayed',(){
     MockPixelMap mockPixelMap = MockPixelMap();
-    GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(1,3,1,3),DisplaySize(3,3),1);
+    GraphDisplay graphDisplay = GraphDisplay.bounds(GraphBounds(1,3,1,3),DisplaySize(3,3),1);
     graphDisplay.pixelMap = mockPixelMap;
 
     graphDisplay.plotSegment(Coordinates(5,5), Coordinates(6,7), Colors.black);
@@ -401,7 +401,7 @@ void main() {
       MockCoordinatePixelTranslator mockTranslator;
 
       setUpAll((){
-        GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-1,1,-1,1),DisplaySize(3,3),1);
+        GraphDisplay graphDisplay = GraphDisplay.bounds(GraphBounds(-1,1,-1,1),DisplaySize(3,3),1);
         mockPixelMap = MockPixelMap();
         graphDisplay.pixelMap = mockPixelMap;
 
@@ -448,7 +448,7 @@ void main() {
       MockCoordinatePixelTranslator mockTranslator;
 
       setUpAll((){
-        GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(0,2,-2,0),DisplaySize(3,3),1);
+        GraphDisplay graphDisplay = GraphDisplay.bounds(GraphBounds(0,2,-2,0),DisplaySize(3,3),1);
         mockPixelMap = MockPixelMap();
         graphDisplay.pixelMap = mockPixelMap;
 
@@ -494,7 +494,7 @@ void main() {
       MockCoordinatePixelTranslator mockTranslator;
 
       setUpAll((){
-        GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-1,1,1,3),DisplaySize(3,3),1);
+        GraphDisplay graphDisplay = GraphDisplay.bounds(GraphBounds(-1,1,1,3),DisplaySize(3,3),1);
         mockPixelMap = MockPixelMap();
         graphDisplay.pixelMap = mockPixelMap;
 
@@ -529,7 +529,7 @@ void main() {
       MockCoordinatePixelTranslator mockTranslator;
 
       setUpAll((){
-        GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(1,3,-1,1),DisplaySize(3,3),1);
+        GraphDisplay graphDisplay = GraphDisplay.bounds(GraphBounds(1,3,-1,1),DisplaySize(3,3),1);
         mockPixelMap = MockPixelMap();
         graphDisplay.pixelMap = mockPixelMap;
 
@@ -566,7 +566,7 @@ void main() {
       MockCoordinatePixelTranslator mockTranslator;
 
       setUpAll((){
-        GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-1, 1, -1, 1), DisplaySize(3, 3), 1);
+        GraphDisplay graphDisplay = GraphDisplay.bounds(GraphBounds(-1, 1, -1, 1), DisplaySize(3, 3), 1);
         mockPixelMap = MockPixelMap();
         graphDisplay.pixelMap = mockPixelMap;
 
@@ -602,7 +602,7 @@ void main() {
     test('cursor can be calculated by pixel location',(){
       MockCoordinatePixelTranslator mockTranslator = MockCoordinatePixelTranslator();
 
-      GraphDisplay graphDisplay = GraphDisplay.bounds(Bounds(-2, 2, -2, 2), DisplaySize(5, 5), 1);
+      GraphDisplay graphDisplay = GraphDisplay.bounds(GraphBounds(-2, 2, -2, 2), DisplaySize(5, 5), 1);
       graphDisplay.translator = mockTranslator;
       when(mockTranslator.translateCluster(ClusterLocation(2, 4))).thenReturn(Coordinates(3,4));
       Coordinates coordinates = graphDisplay.calculateCoordinates(PixelLocation(2, 4));
