@@ -4,6 +4,7 @@ import 'package:advanced_calculation/advanced_calculator.dart';
 import 'package:cartesian_graph/coordinates.dart';
 import 'package:cartesian_graph/graph_bounds.dart';
 import 'package:cartesian_graph/line.dart';
+import 'package:cartesian_graph/src/coordinates_calculator.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,9 +26,12 @@ class CartesianGraph extends StatelessWidget{
   GraphDisplay display;
   final Color cursorColor;
   final List<Line> lines;
+  final CoordinatesCalculator _coordinatesCalculator;
 
 
-  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.cursorColor = Colors.blue, this.coordinatesBuilder, this.lines});
+  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.cursorColor = Colors.blue, this.coordinatesBuilder, this.lines,
+    CoordinatesCalculator coordinatesCalculator}):
+      this._coordinatesCalculator = coordinatesCalculator;
 
   Future<ui.Image> _makeImage(double containerWidth, double containerHeight){
     final c = Completer<ui.Image>();
@@ -43,14 +47,11 @@ class CartesianGraph extends StatelessWidget{
       _plotCoordinates(display, builderCoordinates, Colors.black);
     }
 
-    for (Line line in lines) {
-      AdvancedCalculator calculator = createCoordinateCalculator();
-      List<Coordinates> calculatedCoordinates = [];
-      for(double xCoordinate in display.xCoordinates){
-        double yCoordinate = calculator.calculateEquation(line.equation, xCoordinate);
-        calculatedCoordinates.add(Coordinates(xCoordinate, yCoordinate));
+    if(lines != null) {
+      for (Line line in lines) {
+        List<Coordinates> calculatedCoordinates = _coordinatesCalculator.calculate(line.equation, display.xCoordinates, line.segmentBounds);
+        _plotCoordinates(display, calculatedCoordinates, line.color);
       }
-      _plotCoordinates(display, calculatedCoordinates, line.color);
     }
 
     _plotCoordinates(display, coordinates, Colors.black);
