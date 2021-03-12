@@ -1,8 +1,8 @@
 library cartesian_graph;
 
 import 'package:advanced_calculation/advanced_calculator.dart';
-import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/graph_bounds.dart';
 import 'package:cartesian_graph/line.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
@@ -20,7 +20,7 @@ class CartesianGraph extends StatelessWidget{
   final Coordinates cursorLocation;
   final int density = 4;
   final Color legendColor;
-  final Bounds bounds;
+  final GraphBounds bounds;
   final List<Coordinates> Function(List<double>) coordinatesBuilder;
   GraphDisplay display;
   final Color cursorColor;
@@ -66,7 +66,7 @@ class CartesianGraph extends StatelessWidget{
     }
   }
 
-  GraphDisplay createGraphDisplay(Bounds bounds, DisplaySize displaySize, int density){
+  GraphDisplay createGraphDisplay(GraphBounds bounds, DisplaySize displaySize, int density){
     return GraphDisplay.bounds(bounds,displaySize,density);
   }
 

@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/graph_bounds.dart';
 import 'package:cartesian_graph/src/display/cluster_location.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/translator/coordinate_pixel_location_map.dart';
@@ -13,7 +13,7 @@ class CoordinatePixelTranslator{
 
   CoordinatePixelTranslator._internal(this.pixelLocations, this.xCoordinates);
 
-  factory CoordinatePixelTranslator(Bounds bounds,DisplaySize displaySize, int lineWeight){
+  factory CoordinatePixelTranslator(GraphBounds bounds,DisplaySize displaySize, int lineWeight){
     if(displaySize.width == 0 || displaySize.height == 0 || lineWeight < 1){
       throw InvalidGraphException();
     }
