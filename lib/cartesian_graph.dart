@@ -3,6 +3,7 @@ library cartesian_graph;
 import 'package:advanced_calculation/advanced_calculator.dart';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/line.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,16 +20,14 @@ class CartesianGraph extends StatelessWidget{
   final Coordinates cursorLocation;
   final int density = 4;
   final Color legendColor;
-  final Color lineColor;
   final Bounds bounds;
   final List<Coordinates> Function(List<double>) coordinatesBuilder;
-  final List<String> equations;
   GraphDisplay display;
-  final int chosenEquationIndex;
   final Color cursorColor;
+  final List<Line> lines;
 
 
-  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.cursorColor = Colors.blue, this.lineColor = Colors.black, this.coordinatesBuilder, this.equations, this.chosenEquationIndex = -1});
+  CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.cursorColor = Colors.blue, this.coordinatesBuilder, this.lines});
 
   Future<ui.Image> _makeImage(double containerWidth, double containerHeight){
     final c = Completer<ui.Image>();
@@ -41,40 +40,27 @@ class CartesianGraph extends StatelessWidget{
 
     if(coordinatesBuilder != null){
       List<Coordinates> builderCoordinates = coordinatesBuilder(display.xCoordinates);
-      _plotCoordinates(display, builderCoordinates);
+      _plotCoordinates(display, builderCoordinates, Colors.black);
     }
 
-    for (int i = 0; i < equations.length; i++) {
-      if (equations[i] != null){
-        AdvancedCalculator calculator = createCoordinateCalculator();
-        List<Coordinates> calculatedCoordinates = [];
-        for(double xCoordinate in display.xCoordinates){
-          double yCoordinate = calculator.calculateEquation(equations[i], xCoordinate);
-          calculatedCoordinates.add(Coordinates(xCoordinate, yCoordinate));
-        }
-        if (i == chosenEquationIndex) {
-          _plotChosenCoordinates(display, calculatedCoordinates);
-        }
-        else {
-          _plotCoordinates(display, calculatedCoordinates);
-        }
+    for (Line line in lines) {
+      AdvancedCalculator calculator = createCoordinateCalculator();
+      List<Coordinates> calculatedCoordinates = [];
+      for(double xCoordinate in display.xCoordinates){
+        double yCoordinate = calculator.calculateEquation(line.equation, xCoordinate);
+        calculatedCoordinates.add(Coordinates(xCoordinate, yCoordinate));
       }
+      _plotCoordinates(display, calculatedCoordinates, line.color);
     }
 
-    _plotCoordinates(display, coordinates);
+    _plotCoordinates(display, coordinates, Colors.black);
 
     display.render(c.complete);
 
     return c.future;
   }
 
-  void _plotChosenCoordinates(GraphDisplay display, List<Coordinates> coordinates){
-    for(int i = 0; i< coordinates.length-1;i++){
-      display.plotSegment(coordinates[i],coordinates[i+1], Colors.red);
-    }
-  }
-
-  void _plotCoordinates(GraphDisplay display, List<Coordinates> coordinates){
+  void _plotCoordinates(GraphDisplay display, List<Coordinates> coordinates, Color lineColor){
     for(int i = 0; i< coordinates.length-1;i++){
       display.plotSegment(coordinates[i],coordinates[i+1], lineColor);
     }

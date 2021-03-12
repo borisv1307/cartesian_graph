@@ -5,6 +5,7 @@ import 'package:advanced_calculation/advanced_calculator.dart';
 import 'package:cartesian_graph/bounds.dart';
 import 'package:cartesian_graph/cartesian_graph.dart';
 import 'package:cartesian_graph/coordinates.dart';
+import 'package:cartesian_graph/line.dart';
 import 'package:cartesian_graph/pixel_location.dart';
 import 'package:cartesian_graph/src/display/display_size.dart';
 import 'package:cartesian_graph/src/display/graph_display.dart';
@@ -36,7 +37,7 @@ class TestableCartesianGraph extends CartesianGraph{
   final GraphDisplay _graphDisplay;
   final AdvancedCalculator coordinateCalculator;
   TestableCartesianGraph(Bounds bounds, this._graphDisplay, this.coordinateCalculator, {List<Coordinates> coordinates = const [], coordinatesBuilder,equation, Coordinates cursorLocation, PixelLocation cursorPixelLocation,Color cursorColor=Colors.blue}):
-        super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, equations: [equation],cursorLocation: cursorLocation,cursorColor: cursorColor);
+        super(bounds,coordinates: coordinates, coordinatesBuilder: coordinatesBuilder, lines: [Line(equation)],cursorLocation: cursorLocation,cursorColor: cursorColor);
 
   @override
   GraphDisplay createGraphDisplay(Bounds bounds, DisplaySize displaySize, int density){
