@@ -31,7 +31,7 @@ class CartesianGraph extends StatelessWidget{
 
   CartesianGraph(this.bounds, {this.coordinates= const [], this.cursorLocation, this.legendColor = Colors.blueGrey, this.cursorColor = Colors.blue, this.coordinatesBuilder, this.lines,
     CoordinatesCalculator coordinatesCalculator}):
-      this._coordinatesCalculator = coordinatesCalculator;
+      this._coordinatesCalculator = coordinatesCalculator ?? CoordinatesCalculator();
 
   Future<ui.Image> _makeImage(double containerWidth, double containerHeight){
     final c = Completer<ui.Image>();
