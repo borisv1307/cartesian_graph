@@ -61,7 +61,7 @@ void main() {
   group('Graph Display', (){
 
     test('is created',(){
-      CartesianGraph cartesianGraph = CartesianGraph(GraphBounds(-1,1,-1,1));
+      CartesianGraph cartesianGraph = CartesianGraph(GraphBounds(-1,1,-1,1), coordinatesCalculator: MockCalculator());
       expect(cartesianGraph.createGraphDisplay(GraphBounds(-1,1,-1,1), DisplaySize(2,2), 1),isInstanceOf<GraphDisplay>());
     });
 
