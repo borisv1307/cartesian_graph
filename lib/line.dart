@@ -5,5 +5,6 @@ class Line{
   final Color color;
   final String equation;
   final SegmentBounds segmentBounds;
-  Line(this.equation,{this.color = Colors.black, this.segmentBounds});
+  Line(this.equation,{this.color = Colors.black, SegmentBounds segmentBounds}):
+    this.segmentBounds = segmentBounds ?? SegmentBounds();
 }
