@@ -43,7 +43,10 @@ class GraphDisplay{
   }
 
   void plotSegment(Coordinates firstCoordinates, Coordinates secondCoordinates, Color color){
-    if(this.bounds.isWithin(firstCoordinates) || this.bounds.isWithin(secondCoordinates)){
+    if((this.bounds.isWithin(firstCoordinates) || this.bounds.isWithin(secondCoordinates)) &&
+        !firstCoordinates.y.isNaN && !secondCoordinates.y.isNaN &&
+        !firstCoordinates.y.isInfinite && !secondCoordinates.y.isInfinite){
+          
       ClusterLocation first = _calculatePixelCluster(firstCoordinates);
       ClusterLocation second = _calculatePixelCluster(secondCoordinates);
 
